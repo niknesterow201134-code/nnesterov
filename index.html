@@ -4,12 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NESTEROV — Домашние ужины за 15 минут</title>
-  <meta name="description" content="Еженедельный спринт домашних ужинов ресторанного вкуса за 15 минут. Единый список закупок, ноль отходов и простые рецепты на каждый вечер.">
+  <meta name="description" content="Еженедельный спринт домашних ужинов за 15 минут от NESTEROV. Единый список покупок на неделю, ноль отходов и ресторанный вкус на одной сковороде.">
 
-  <!-- Шрифты: Onest (мягкий современный гротеск для чтения) + Manrope (чистая геометрия для акцентов) -->
+  <!-- Шрифты: Manrope (акценты) + Onest (основной текст) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Onest:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800;900&family=Onest:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Three.js для 3D апельсинов на траве -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -22,21 +25,14 @@
             display: ['"Manrope"', 'sans-serif'],
           },
           colors: {
-            warm: {
-              bg: '#FBF9F5',        /* Теплый молочно-льняной фон, мягкий для глаз */
-              surface: '#FFFFFF',   /* Чистый белый для карточек */
-              border: '#EAE6DF',    /* Нежная ненавязчивая рамка */
-              soft: '#F4EFEA',      /* Мягкий фон бейджей и вторичных плашек */
-              dark: '#1C1917',      /* Глубокий кофейно-графитовый (не едкий черный) */
-              muted: '#78716C',     /* Приглушенный спокойный текст */
-              accent: '#C2410C',    /* Благородная теплая терракота */
-              accenthover: '#9A3412',
-              green: '#2D5A3E'      /* Натуральный лесной шалфей */
+            brand: {
+              orange: '#FF6B00',
+              orangehover: '#E05E00',
+              dark: '#141E16',
+              grass: '#1E542D',
+              cream: '#FAF8F3',
+              border: 'rgba(255, 255, 255, 0.2)'
             }
-          },
-          boxShadow: {
-            'soft': '0 4px 20px -2px rgba(28, 25, 23, 0.04), 0 2px 6px -1px rgba(28, 25, 23, 0.02)',
-            'card': '0 10px 30px -4px rgba(28, 25, 23, 0.06)',
           }
         }
       }
@@ -51,405 +47,404 @@
 
   <style>
     [x-cloak] { display: none !important; }
+
+    /* Полноэкранный Three.js холст */
+    #hero-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: auto;
+    }
+
+    .glass-pill {
+      background: rgba(255, 255, 255, 0.82);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+    }
+
+    .glass-dark {
+      background: rgba(18, 30, 20, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
   </style>
 </head>
-<body class="bg-warm-bg text-warm-dark font-sans antialiased min-h-screen flex flex-col selection:bg-warm-accent selection:text-white"
+<body class="bg-[#FAF8F3] text-stone-900 font-sans antialiased selection:bg-orange-500 selection:text-white"
       x-data="{ showTariffs: false }">
 
-  <!-- ================= АККУРАТНАЯ ШАПКА ================= -->
-  <header class="border-b border-warm-border bg-warm-bg/90 backdrop-blur-md sticky top-0 z-30 transition-all">
-    <div class="max-w-6xl mx-auto px-6 h-18 py-4 flex items-center justify-between">
+  <!-- ================= СЕКЦИЯ HERO С 3D АПЕЛЬСИНАМИ НА ТРАВЕ ================= -->
+  <div class="relative w-full h-[92vh] min-h-[620px] overflow-hidden flex flex-col justify-between bg-[#153a20]">
+    
+    <!-- Three.js 3D Canvas -->
+    <div id="hero-canvas"></div>
+
+    <!-- Градиентная виньетка сверху и снизу для идеальной читаемости -->
+    <div class="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/40 to-transparent pointer-events-none z-10"></div>
+    <div class="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#102917]/80 to-transparent pointer-events-none z-10"></div>
+
+    <!-- Верхнее меню (Header) -->
+    <header class="relative z-20 max-w-6xl mx-auto w-full px-6 py-6 flex items-center justify-between">
       
       <!-- Логотип NESTEROV -->
-      <a href="#" class="flex items-center gap-2.5 group">
-        <span class="font-display font-extrabold text-xl tracking-tight text-warm-dark group-hover:text-warm-accent transition-colors">
-          NESTEROV
-        </span>
-        <span class="w-1.5 h-1.5 rounded-full bg-warm-accent"></span>
+      <a href="#" class="flex items-center gap-2 group">
+        <span class="font-display font-extrabold text-2xl tracking-tight text-white drop-shadow-md">NESTEROV</span>
+        <span class="w-2.5 h-2.5 rounded-full bg-orange-500 shadow-sm shadow-orange-500/50"></span>
       </a>
 
-      <!-- Меню -->
-      <nav class="hidden sm:flex items-center gap-8 text-xs font-semibold text-warm-muted">
-        <a href="#menu" class="hover:text-warm-dark transition-colors">Меню недели</a>
-        <a href="#about" class="hover:text-warm-dark transition-colors">Как это работает</a>
-        <a href="#faq" class="hover:text-warm-dark transition-colors">Вопросы</a>
+      <!-- Навигация -->
+      <nav class="hidden md:flex items-center gap-6 text-xs font-semibold text-white/90">
+        <a href="#menu" class="hover:text-white drop-shadow transition-colors">Меню недели</a>
+        <a href="#about" class="hover:text-white drop-shadow transition-colors">О системе</a>
+        <a href="#faq" class="hover:text-white drop-shadow transition-colors">Вопросы</a>
       </nav>
 
-      <!-- Кнопка подписки в шапке -->
+      <!-- Кнопка в шапке -->
       <button @click="showTariffs = true" 
-              class="inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-warm-dark hover:bg-warm-accent text-white text-xs font-semibold tracking-wide transition-all shadow-sm">
+              class="px-5 py-2.5 rounded-full bg-white text-stone-900 hover:bg-orange-500 hover:text-white text-xs font-bold tracking-wide transition-all shadow-lg active:scale-95">
         Выбрать подписку
       </button>
 
-    </div>
-  </header>
+    </header>
 
-  <!-- ================= ГЛАВНЫЙ ЭКРАН (HERO) ================= -->
-  <section class="py-16 sm:py-24 max-w-6xl mx-auto px-6 w-full">
-    <div class="max-w-3xl space-y-7">
+    <!-- Текстовый Hero блок по центру -->
+    <div class="relative z-20 max-w-3xl mx-auto px-6 text-center space-y-6 my-auto pointer-events-none">
       
-      <!-- Спокойный бейдж -->
-      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-warm-soft border border-warm-border text-xs font-medium text-warm-dark">
-        <span class="w-2 h-2 rounded-full bg-warm-accent"></span>
-        <span>Домашнее бистро на каждый день</span>
+      <!-- Бейдж -->
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/20 backdrop-blur-md border border-white/25 text-xs font-semibold text-white shadow-sm pointer-events-auto">
+        <span class="w-2 h-2 rounded-full bg-orange-400 animate-pulse"></span>
+        <span>Спринт ужинов на каждый вечер</span>
       </div>
 
-      <!-- Главный заголовок: живой, человеческий, не капс -->
-      <h1 class="font-display font-bold text-4xl sm:text-5xl lg:text-6xl tracking-tight leading-[1.15] text-warm-dark">
-        Домашние ужины ресторанного вкуса за 15 минут
+      <!-- Главный заголовок -->
+      <h1 class="font-display font-black text-4xl sm:text-6xl lg:text-7xl tracking-tight text-white leading-[1.08] drop-shadow-lg">
+        Домашние ужины за 15 минут
       </h1>
 
-      <!-- Описание без клише -->
-      <p class="text-base sm:text-lg text-warm-muted leading-relaxed max-w-2xl font-normal">
-        Один понятный список покупок на неделю, пошаговые ужины на одной сковороде и ноль мыслей «что приготовить сегодня вечером». Простая еда без кулинарной рутины.
+      <!-- Описание -->
+      <p class="text-base sm:text-lg text-white/90 leading-relaxed max-w-xl mx-auto drop-shadow font-medium">
+        Единый список продуктов на неделю, ресторанный вкус на одной сковороде и ноль мыслей «что приготовить сегодня».
       </p>
 
       <!-- Кнопки действия -->
-      <div class="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5">
+      <div class="pt-3 flex flex-col sm:flex-row items-center justify-center gap-3.5 pointer-events-auto">
         <button @click="showTariffs = true"
-                class="inline-flex items-center justify-center px-7 py-3.5 rounded-full bg-warm-accent hover:bg-warm-accenthover text-white font-semibold text-sm tracking-wide transition-all shadow-soft active:scale-[0.98]">
+                class="w-full sm:w-auto px-8 py-3.5 rounded-full bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm tracking-wide shadow-xl shadow-orange-600/40 transition-all hover:scale-105 active:scale-95">
           Выбрать подписку от 290 ₽
         </button>
         <a href="#menu"
-           class="inline-flex items-center justify-center px-6 py-3.5 rounded-full bg-white hover:bg-warm-soft text-warm-dark border border-warm-border font-semibold text-sm tracking-wide transition-all text-center">
-          Посмотреть меню недели ↓
+           class="w-full sm:w-auto px-6 py-3.5 rounded-full bg-white/15 hover:bg-white/25 text-white backdrop-blur-md border border-white/30 font-semibold text-sm tracking-wide transition-all">
+          Смотреть меню недели ↓
         </a>
       </div>
 
-      <!-- 3 спокойных факта -->
-      <div class="pt-8 grid grid-cols-1 sm:grid-cols-3 gap-4 border-t border-warm-border/80">
-        <div class="space-y-1">
-          <div class="font-display font-bold text-sm text-warm-dark">15 минут у плиты</div>
-          <div class="text-xs text-warm-muted">Честный тайминг без долгой предварительной нарезки</div>
+    </div>
+
+    <!-- Подсказка снизу -->
+    <div class="relative z-20 text-center pb-6 text-xs text-white/75 drop-shadow pointer-events-none">
+      <span>Пошевелите мышкой или коснитесь экрана — апельсины катятся по траве</span>
+    </div>
+
+  </div>
+
+  <!-- ================= МЕНЮ НЕДЕЛИ ================= -->
+  <section id="menu" class="py-20 max-w-6xl mx-auto px-6">
+    
+    <div class="max-w-xl space-y-2 mb-12">
+      <span class="text-xs font-bold uppercase tracking-wider text-orange-600">Пример спринта</span>
+      <h2 class="font-display font-extrabold text-3xl sm:text-4xl tracking-tight text-stone-900">
+        Меню недели: Пн — Чт
+      </h2>
+      <p class="text-sm text-stone-600">
+        Один поход в супермаркет в воскресенье закрывает ужины на 4 дня вперед без лишних трат.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      
+      <!-- Пн -->
+      <div class="p-6 rounded-3xl bg-white border border-stone-200/80 shadow-sm flex flex-col justify-between space-y-4 hover:shadow-md transition-shadow">
+        <div class="space-y-2">
+          <div class="flex items-center justify-between text-xs text-stone-500 font-semibold">
+            <span class="text-stone-900">Понедельник</span>
+            <span>12 мин</span>
+          </div>
+          <h3 class="font-display font-bold text-base text-stone-900 leading-snug">
+            Паста с хрустящим беконом, черри и шпинатом
+          </h3>
+          <p class="text-xs text-stone-600 leading-relaxed">
+            Вытопленный бекон, сочные томаты конфи и шелковистая сырная эмульсия.
+          </p>
         </div>
-        <div class="space-y-1">
-          <div class="font-display font-bold text-sm text-warm-dark">1 поход в магазин</div>
-          <div class="text-xs text-warm-muted">Готовый список на Пн–Чт в магазине у дома</div>
+        <div class="text-[11px] font-semibold text-orange-600">
+          1 сковорода • 12 минут
         </div>
-        <div class="space-y-1">
-          <div class="font-display font-bold text-sm text-warm-dark">0% выброшенной еды</div>
-          <div class="text-xs text-warm-muted">Продукты переходят из блюда в блюдо без остатков</div>
+      </div>
+
+      <!-- Вт -->
+      <div class="p-6 rounded-3xl bg-white border border-stone-200/80 shadow-sm flex flex-col justify-between space-y-4 hover:shadow-md transition-shadow">
+        <div class="space-y-2">
+          <div class="flex items-center justify-between text-xs text-stone-500 font-semibold">
+            <span class="text-stone-900">Вторник</span>
+            <span>14 мин</span>
+          </div>
+          <h3 class="font-display font-bold text-base text-stone-900 leading-snug">
+            Стейк из индейки с тимьяном и морковью
+          </h3>
+          <p class="text-xs text-stone-600 leading-relaxed">
+            Карамельная корочка на сильном огне, сливочное масло, травы и капли лимона.
+          </p>
+        </div>
+        <div class="text-[11px] font-semibold text-orange-600">
+          1 сковорода • 14 минут
+        </div>
+      </div>
+
+      <!-- Ср -->
+      <div class="p-6 rounded-3xl bg-white border border-stone-200/80 shadow-sm flex flex-col justify-between space-y-4 hover:shadow-md transition-shadow">
+        <div class="space-y-2">
+          <div class="flex items-center justify-between text-xs text-stone-500 font-semibold">
+            <span class="text-stone-900">Среда</span>
+            <span>10 мин</span>
+          </div>
+          <h3 class="font-display font-bold text-base text-stone-900 leading-snug">
+            Теплый салат с ростбифом и дижонской заправкой
+          </h3>
+          <p class="text-xs text-stone-600 leading-relaxed">
+            Использование оставшейся зелени и заправки. Собирается сразу в тарелке.
+          </p>
+        </div>
+        <div class="text-[11px] font-semibold text-orange-600">
+          Без жарки • 10 минут
+        </div>
+      </div>
+
+      <!-- Чт -->
+      <div class="p-6 rounded-3xl bg-white border border-stone-200/80 shadow-sm flex flex-col justify-between space-y-4 hover:shadow-md transition-shadow">
+        <div class="space-y-2">
+          <div class="flex items-center justify-between text-xs text-stone-500 font-semibold">
+            <span class="text-stone-900">Четверг</span>
+            <span>15 мин</span>
+          </div>
+          <h3 class="font-display font-bold text-base text-stone-900 leading-snug">
+            Сливочный птитим со шпинатом и креветками
+          </h3>
+          <p class="text-xs text-stone-600 leading-relaxed">
+            Все травы и остатки шпината уходят в соус. В холодильнике ноль отходов к выходным.
+          </p>
+        </div>
+        <div class="text-[11px] font-semibold text-orange-600">
+          1 сотейник • 15 минут
         </div>
       </div>
 
     </div>
+
   </section>
 
-  <!-- ================= МЕНЮ НЕДЕЛИ (ПРИМЕР СПРИНТА) ================= -->
-  <section id="menu" class="py-16 sm:py-20 border-t border-warm-border bg-white">
+  <!-- ================= 3 ПРАВИЛА СИСТЕМЫ ================= -->
+  <section id="about" class="py-16 border-t border-stone-200/80 bg-white">
     <div class="max-w-6xl mx-auto px-6">
       
       <div class="max-w-xl space-y-2 mb-12">
-        <span class="text-xs font-semibold uppercase tracking-wider text-warm-accent">Пример спринта</span>
-        <h2 class="font-display font-bold text-2xl sm:text-3xl tracking-tight text-warm-dark">
-          Как выглядит меню на неделю
+        <span class="text-xs font-bold uppercase tracking-wider text-orange-600">Почему это удобно</span>
+        <h2 class="font-display font-extrabold text-3xl tracking-tight text-stone-900">
+          Три простых правила
         </h2>
-        <p class="text-sm text-warm-muted">
-          Вы покупаете набор продуктов в воскресенье — и с понедельника по четверг у вас горячий свежий ужин за четверть часа.
-        </p>
       </div>
 
-      <!-- Сетка 4 дней -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        
-        <!-- Пн -->
-        <div class="p-6 rounded-2xl bg-warm-bg border border-warm-border flex flex-col justify-between space-y-4 hover:border-stone-400 transition-colors">
-          <div class="space-y-2.5">
-            <div class="flex items-center justify-between text-xs text-warm-muted">
-              <span class="font-semibold text-warm-dark">Понедельник</span>
-              <span>12 мин</span>
-            </div>
-            <h3 class="font-display font-bold text-base text-warm-dark leading-snug">
-              Паста с хрустящим беконом, черри и шпинатом
-            </h3>
-            <p class="text-xs text-warm-muted leading-relaxed">
-              Вытопленный бекон, лопнувшие томаты и шелковистая крахмальная эмульсия с пармезаном.
-            </p>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="p-6 rounded-3xl bg-[#FAF8F3] border border-stone-200/60 space-y-3">
+          <div class="w-10 h-10 rounded-2xl bg-orange-500/10 text-orange-600 font-display font-extrabold flex items-center justify-center text-sm">
+            1
           </div>
-          <div class="text-[11px] font-medium text-warm-accent">
-            1 сковорода • 12 минут
-          </div>
+          <h3 class="font-display font-bold text-lg text-stone-900">Обычный магазин у дома</h3>
+          <p class="text-xs text-stone-600 leading-relaxed">
+            Никаких редких продуктов. Всё покупается в «Магните», «Пятерочке», «ВкусВилле» или «Самокате».
+          </p>
         </div>
 
-        <!-- Вт -->
-        <div class="p-6 rounded-2xl bg-warm-bg border border-warm-border flex flex-col justify-between space-y-4 hover:border-stone-400 transition-colors">
-          <div class="space-y-2.5">
-            <div class="flex items-center justify-between text-xs text-warm-muted">
-              <span class="font-semibold text-warm-dark">Вторник</span>
-              <span>14 мин</span>
-            </div>
-            <h3 class="font-display font-bold text-base text-warm-dark leading-snug">
-              Стейк из индейки с тимьяном и сладкой морковью
-            </h3>
-            <p class="text-xs text-warm-muted leading-relaxed">
-              Быстрая обжарка на сильном огне, сливочное масло, тимьян и сок лимона для соуса.
-            </p>
+        <div class="p-6 rounded-3xl bg-[#FAF8F3] border border-stone-200/60 space-y-3">
+          <div class="w-10 h-10 rounded-2xl bg-orange-500/10 text-orange-600 font-display font-extrabold flex items-center justify-center text-sm">
+            2
           </div>
-          <div class="text-[11px] font-medium text-warm-accent">
-            1 сковорода • 14 минут
-          </div>
+          <h3 class="font-display font-bold text-lg text-stone-900">Одна сковорода и нож</h3>
+          <p class="text-xs text-stone-600 leading-relaxed">
+            Минимум посуды и чистая кухня. Никаких комбайнов, сувидов и горы кастрюль в раковине к ночи.
+          </p>
         </div>
 
-        <!-- Ср -->
-        <div class="p-6 rounded-2xl bg-warm-bg border border-warm-border flex flex-col justify-between space-y-4 hover:border-stone-400 transition-colors">
-          <div class="space-y-2.5">
-            <div class="flex items-center justify-between text-xs text-warm-muted">
-              <span class="font-semibold text-warm-dark">Среда</span>
-              <span>10 мин</span>
-            </div>
-            <h3 class="font-display font-bold text-base text-warm-dark leading-snug">
-              Теплый салат с ростбифом и горчичной заправкой
-            </h3>
-            <p class="text-xs text-warm-muted leading-relaxed">
-              Использование остатков мяса и зелени с начала недели. Собирается прямо в тарелке.
-            </p>
+        <div class="p-6 rounded-3xl bg-[#FAF8F3] border border-stone-200/60 space-y-3">
+          <div class="w-10 h-10 rounded-2xl bg-orange-500/10 text-orange-600 font-display font-extrabold flex items-center justify-center text-sm">
+            3
           </div>
-          <div class="text-[11px] font-medium text-warm-accent">
-            Без жарки • 10 минут
-          </div>
+          <h3 class="font-display font-bold text-lg text-stone-900">Честные 15 минут</h3>
+          <p class="text-xs text-stone-600 leading-relaxed">
+            Действия выстроены параллельно по таймеру: от щелчка конфорки до готового блюда на тарелке.
+          </p>
         </div>
-
-        <!-- Чт -->
-        <div class="p-6 rounded-2xl bg-warm-bg border border-warm-border flex flex-col justify-between space-y-4 hover:border-stone-400 transition-colors">
-          <div class="space-y-2.5">
-            <div class="flex items-center justify-between text-xs text-warm-muted">
-              <span class="font-semibold text-warm-dark">Четверг</span>
-              <span>15 мин</span>
-            </div>
-            <h3 class="font-display font-bold text-base text-warm-dark leading-snug">
-              Сливочный птитим со шпинатом и креветками
-            </h3>
-            <p class="text-xs text-warm-muted leading-relaxed">
-              Финальный ужин недели. Все травы и шпинат уходят в соус, холодильник чист перед выходными.
-            </p>
-          </div>
-          <div class="text-[11px] font-medium text-warm-accent">
-            1 сотейник • 15 минут
-          </div>
-        </div>
-
-      </div>
-
-      <!-- Призыв под меню -->
-      <div class="mt-12 p-6 rounded-2xl bg-warm-bg border border-warm-border flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div class="space-y-1">
-          <div class="font-display font-bold text-sm text-warm-dark">Каждое воскресенье в канале — новый список и 4 ужина</div>
-          <div class="text-xs text-warm-muted">С точными граммовками, подсказками по заменам и короткими видеоинструкциями.</div>
-        </div>
-        <button @click="showTariffs = true"
-                class="inline-flex items-center justify-center px-6 py-2.5 rounded-full bg-warm-dark hover:bg-warm-accent text-white text-xs font-semibold tracking-wide transition-colors shrink-0">
-          Выбрать подписку →
-        </button>
       </div>
 
     </div>
   </section>
 
-  <!-- ================= КАК ЭТО РАБОТАЕТ ================= -->
-  <section id="about" class="py-16 sm:py-20 border-t border-warm-border max-w-6xl mx-auto px-6">
-    <div class="max-w-xl space-y-2 mb-12">
-      <span class="text-xs font-semibold uppercase tracking-wider text-warm-accent">Принцип работы</span>
-      <h2 class="font-display font-bold text-2xl sm:text-3xl tracking-tight text-warm-dark">
-        Три простых правила системы
+  <!-- ================= FAQ ================= -->
+  <section id="faq" class="py-16 border-t border-stone-200/80 max-w-4xl mx-auto px-6" x-data="{ open: null }">
+    <div class="text-center space-y-2 mb-10">
+      <span class="text-xs font-bold uppercase tracking-wider text-orange-600">Ответы на вопросы</span>
+      <h2 class="font-display font-extrabold text-3xl tracking-tight text-stone-900">
+        Частые вопросы
       </h2>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div class="p-6 rounded-2xl bg-white border border-warm-border space-y-3">
-        <div class="w-9 h-9 rounded-full bg-warm-soft text-warm-accent font-display font-bold flex items-center justify-center text-sm">
-          1
+    <div class="space-y-3">
+      <div class="rounded-2xl border border-stone-200 bg-white overflow-hidden shadow-sm">
+        <button @click="open = open === 1 ? null : 1" class="w-full p-5 text-left flex items-center justify-between gap-4 font-bold text-sm text-stone-900">
+          <span>Справлюсь ли я, если почти не умею готовить?</span>
+          <span class="text-stone-400 text-lg" x-text="open === 1 ? '−' : '+'"></span>
+        </button>
+        <div x-show="open === 1" x-cloak class="px-5 pb-5 text-xs text-stone-600 leading-relaxed border-t border-stone-100 pt-3">
+          Да. Все рецепты написаны простым языком, с точными граммами и параллельными шагами. Ошибиться невозможно.
         </div>
-        <h3 class="font-display font-bold text-lg text-warm-dark">Продукты рядом с домом</h3>
-        <p class="text-xs text-warm-muted leading-relaxed">
-          Никаких редких соусов за тысячи рублей или трюфельных масел. Всё из обычного супермаркета или доставки («ВкусВилл», «Магнит», «Самокат»).
-        </p>
       </div>
 
-      <div class="p-6 rounded-2xl bg-white border border-warm-border space-y-3">
-        <div class="w-9 h-9 rounded-full bg-warm-soft text-warm-accent font-display font-bold flex items-center justify-center text-sm">
-          2
+      <div class="rounded-2xl border border-stone-200 bg-white overflow-hidden shadow-sm">
+        <button @click="open = open === 2 ? null : 2" class="w-full p-5 text-left flex items-center justify-between gap-4 font-bold text-sm text-stone-900">
+          <span>Как выдается доступ после оплаты?</span>
+          <span class="text-stone-400 text-lg" x-text="open === 2 ? '−' : '+'"></span>
+        </button>
+        <div x-show="open === 2" x-cloak class="px-5 pb-5 text-xs text-stone-600 leading-relaxed border-t border-stone-100 pt-3">
+          Моментально. Бот сразу отправляет персональную ссылку на закрытый Telegram-канал и дублирует на указанный E-mail.
         </div>
-        <h3 class="font-display font-bold text-lg text-warm-dark">Минимум посуды</h3>
-        <p class="text-xs text-warm-muted leading-relaxed">
-          Базовый шеф-нож, доска и одна сковорода. Никаких сложных гаджетов или горы кастрюль в раковине к ночи.
-        </p>
       </div>
 
-      <div class="p-6 rounded-2xl bg-white border border-warm-border space-y-3">
-        <div class="w-9 h-9 rounded-full bg-warm-soft text-warm-accent font-display font-bold flex items-center justify-center text-sm">
-          3
+      <div class="rounded-2xl border border-stone-200 bg-white overflow-hidden shadow-sm">
+        <button @click="open = open === 3 ? null : 3" class="w-full p-5 text-left flex items-center justify-between gap-4 font-bold text-sm text-stone-900">
+          <span>Как отменить подписку?</span>
+          <span class="text-stone-400 text-lg" x-text="open === 3 ? '−' : '+'"></span>
+        </button>
+        <div x-show="open === 3" x-cloak class="px-5 pb-5 text-xs text-stone-600 leading-relaxed border-t border-stone-100 pt-3">
+          В 1 клик в любое время прямо в Telegram-боте или по ссылке из чека Robokassa. Доступ сохраняется до конца оплаченного периода.
         </div>
-        <h3 class="font-display font-bold text-lg text-warm-dark">Четкий тайминг</h3>
-        <p class="text-xs text-warm-muted leading-relaxed">
-          Действия выстроены параллельно: пока греется вода или сковорода, нарезается базовый ингредиент. Ни секунды впустую.
-        </p>
       </div>
     </div>
   </section>
 
-  <!-- ================= ЧАСТЫЕ ВОПРОСЫ (FAQ) ================= -->
-  <section id="faq" class="py-16 sm:py-20 border-t border-warm-border bg-white" x-data="{ open: null }">
-    <div class="max-w-3xl mx-auto px-6 space-y-8">
-      
-      <div class="text-center space-y-2">
-        <span class="text-xs font-semibold uppercase tracking-wider text-warm-accent">Вопросы и ответы</span>
-        <h2 class="font-display font-bold text-2xl sm:text-3xl tracking-tight text-warm-dark">
-          Часто задаваемые вопросы
-        </h2>
-      </div>
-
-      <div class="space-y-3">
-        
-        <div class="rounded-xl border border-warm-border overflow-hidden">
-          <button @click="open = open === 1 ? null : 1" class="w-full p-5 text-left flex items-center justify-between gap-4 font-semibold text-sm sm:text-base text-warm-dark">
-            <span>У меня получится, если я почти не умею готовить?</span>
-            <span class="text-warm-muted text-lg" x-text="open === 1 ? '−' : '+'"></span>
-          </button>
-          <div x-show="open === 1" x-cloak class="px-5 pb-5 text-xs text-warm-muted leading-relaxed border-t border-warm-border pt-3">
-            Да, абсолютно. Техкарты написаны простым языком без поварского снобизма. Все пропорции указаны в граммах и штуках, а шаги понятны с первого прочтения.
-          </div>
-        </div>
-
-        <div class="rounded-xl border border-warm-border overflow-hidden">
-          <button @click="open = open === 2 ? null : 2" class="w-full p-5 text-left flex items-center justify-between gap-4 font-semibold text-sm sm:text-base text-warm-dark">
-            <span>Как выдается доступ после оплаты?</span>
-            <span class="text-warm-muted text-lg" x-text="open === 2 ? '−' : '+'"></span>
-          </button>
-          <div x-show="open === 2" x-cloak class="px-5 pb-5 text-xs text-warm-muted leading-relaxed border-t border-warm-border pt-3">
-            Моментально. Сразу после подтверждения оплаты платежной системой вы получаете персональную ссылку-приглашение в закрытый Telegram-канал прямо в Telegram-бот и на указанный E-mail.
-          </div>
-        </div>
-
-        <div class="rounded-xl border border-warm-border overflow-hidden">
-          <button @click="open = open === 3 ? null : 3" class="w-full p-5 text-left flex items-center justify-between gap-4 font-semibold text-sm sm:text-base text-warm-dark">
-            <span>Как устроена отмена подписки?</span>
-            <span class="text-warm-muted text-lg" x-text="open === 3 ? '−' : '+'"></span>
-          </button>
-          <div x-show="open === 3" x-cloak class="px-5 pb-5 text-xs text-warm-muted leading-relaxed border-t border-warm-border pt-3">
-            В 1 клик в любое удобное время. Достаточно нажать «Управление подпиской» в Telegram-боте либо перейти по ссылке из письма с чеком Robokassa. Доступ останется активным до конца уже оплаченного периода.
-          </div>
-        </div>
-
-      </div>
-
-    </div>
-  </section>
-
-  <!-- ================= МОДАЛЬНОЕ ОКНО ТАРИФОВ (ОТКРЫВАЕТСЯ ТОЛЬКО ПО КНОПКЕ) ================= -->
+  <!-- ================= МОДАЛКА ТАРИФОВ (1, 3, 6 МЕСЯЦЕВ И 365 ДНЕЙ) ================= -->
   <div x-show="showTariffs" 
        x-cloak 
        @keydown.escape.window="showTariffs = false"
        class="fixed inset-0 z-50 overflow-y-auto"
        aria-labelledby="modal-title" role="dialog" aria-modal="true">
     
-    <!-- Затемнение фона -->
-    <div class="fixed inset-0 bg-warm-dark/50 backdrop-blur-sm transition-opacity" 
+    <div class="fixed inset-0 bg-stone-900/60 backdrop-blur-sm transition-opacity" 
          @click="showTariffs = false"></div>
 
     <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-6">
       
-      <!-- Карточка модалки -->
-      <div class="relative transform overflow-hidden rounded-3xl bg-warm-bg text-left shadow-2xl transition-all w-full max-w-3xl p-6 sm:p-8 border border-warm-border"
+      <div class="relative transform overflow-hidden rounded-3xl bg-white text-left shadow-2xl transition-all w-full max-w-3xl p-6 sm:p-8 border border-stone-100"
            @click.away="showTariffs = false">
         
-        <!-- Шапка модалки -->
-        <div class="flex items-start justify-between pb-5 border-b border-warm-border">
+        <div class="flex items-start justify-between pb-5 border-b border-stone-100">
           <div>
-            <span class="text-[11px] font-bold uppercase tracking-wider text-warm-accent">Тарифы подписки</span>
-            <h3 class="text-xl sm:text-2xl font-display font-bold text-warm-dark mt-1">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-orange-600">Тарифные планы</span>
+            <h3 class="text-2xl font-display font-extrabold text-stone-900 mt-0.5">
               Выберите период подписки
             </h3>
-            <p class="text-xs text-warm-muted mt-0.5">
-              Доступ в Telegram открывается моментально после подтверждения оплаты
+            <p class="text-xs text-stone-500 mt-0.5">
+              Доступ в Telegram открывается моментально после оплаты
             </p>
           </div>
           <button @click="showTariffs = false" 
-                  class="w-8 h-8 rounded-full bg-white border border-warm-border flex items-center justify-center text-warm-muted hover:text-warm-dark transition-colors">
+                  class="w-8 h-8 rounded-full bg-stone-100 hover:bg-stone-200 flex items-center justify-center text-stone-500 transition-colors">
             <i data-lucide="x" class="w-4 h-4"></i>
           </button>
         </div>
 
-        <!-- 4 тарифа: 1, 3, 6 месяцев и 365 дней -->
+        <!-- Сетка 4 тарифов -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 py-6">
           
           <!-- 1 месяц -->
-          <div class="p-4 rounded-2xl bg-white border border-warm-border flex flex-col justify-between space-y-3">
+          <div class="p-4 rounded-2xl bg-stone-50 border border-stone-200 flex flex-col justify-between space-y-3">
             <div>
-              <span class="text-[10px] font-bold uppercase tracking-wider text-warm-muted">1 месяц</span>
-              <div class="text-2xl font-display font-bold text-warm-dark mt-1">290 ₽</div>
-              <div class="text-[11px] text-warm-muted mt-1 leading-tight">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-stone-500">1 месяц</span>
+              <div class="text-2xl font-display font-black text-stone-900 mt-1">290 ₽</div>
+              <div class="text-[11px] text-stone-500 mt-1 leading-tight">
                 Базовый доступ.<br>Автопродление раз в 30 дней.
               </div>
             </div>
             <a href="https://t.me/" target="_blank"
-               class="w-full py-2 rounded-full bg-warm-dark hover:bg-warm-accent text-white text-xs font-semibold text-center transition-colors block">
+               class="w-full py-2 rounded-full bg-stone-900 hover:bg-orange-600 text-white text-xs font-bold text-center transition-colors block">
               Оформить
             </a>
           </div>
 
           <!-- 3 месяца -->
-          <div class="p-4 rounded-2xl bg-white border border-warm-border flex flex-col justify-between space-y-3">
+          <div class="p-4 rounded-2xl bg-stone-50 border border-stone-200 flex flex-col justify-between space-y-3">
             <div>
               <div class="flex items-center justify-between">
-                <span class="text-[10px] font-bold uppercase tracking-wider text-warm-muted">3 месяца</span>
-                <span class="text-[9px] font-bold text-warm-green bg-green-50 px-1.5 py-0.5 rounded">~250 ₽/мес</span>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-stone-500">3 месяца</span>
+                <span class="text-[9px] font-bold text-green-800 bg-green-100 px-1.5 py-0.5 rounded">~250 ₽/мес</span>
               </div>
-              <div class="text-2xl font-display font-bold text-warm-dark mt-1">750 ₽</div>
-              <div class="text-[11px] text-warm-muted mt-1 leading-tight">
+              <div class="text-2xl font-display font-black text-stone-900 mt-1">750 ₽</div>
+              <div class="text-[11px] text-stone-500 mt-1 leading-tight">
                 Сезон ужинов.<br>Автопродление раз в 90 дней.
               </div>
             </div>
             <a href="https://t.me/" target="_blank"
-               class="w-full py-2 rounded-full bg-warm-dark hover:bg-warm-accent text-white text-xs font-semibold text-center transition-colors block">
+               class="w-full py-2 rounded-full bg-stone-900 hover:bg-orange-600 text-white text-xs font-bold text-center transition-colors block">
               Оформить
             </a>
           </div>
 
-          <!-- 6 месяцев (Выбор) -->
-          <div class="p-4 rounded-2xl bg-white border-2 border-warm-accent flex flex-col justify-between space-y-3 relative shadow-sm">
+          <!-- 6 месяцев (ХИТ) -->
+          <div class="p-4 rounded-2xl bg-white border-2 border-orange-500 flex flex-col justify-between space-y-3 relative shadow-sm">
             <div>
               <div class="flex items-center justify-between">
-                <span class="text-[10px] font-bold uppercase tracking-wider text-warm-accent">6 месяцев</span>
-                <span class="text-[9px] font-bold text-white bg-warm-accent px-1.5 py-0.5 rounded">ХИТ</span>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-orange-600">6 месяцев</span>
+                <span class="text-[9px] font-bold text-white bg-orange-500 px-1.5 py-0.5 rounded">ХИТ</span>
               </div>
-              <div class="text-2xl font-display font-bold text-warm-dark mt-1">1 320 ₽</div>
-              <div class="text-[11px] font-bold text-warm-accent mt-1 leading-tight">
-                Всего ~220 ₽ / месяц.<br><span class="font-normal text-warm-muted">Автопродление раз в 180 дней.</span>
+              <div class="text-2xl font-display font-black text-stone-900 mt-1">1 320 ₽</div>
+              <div class="text-[11px] font-bold text-orange-600 mt-1 leading-tight">
+                Всего ~220 ₽ в месяц.<br><span class="font-normal text-stone-500">Автопродление раз в 180 дней.</span>
               </div>
             </div>
             <a href="https://t.me/" target="_blank"
-               class="w-full py-2 rounded-full bg-warm-accent hover:bg-warm-accenthover text-white text-xs font-semibold text-center transition-colors block shadow-sm">
+               class="w-full py-2 rounded-full bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold text-center transition-colors block shadow-sm">
               Оформить
             </a>
           </div>
 
           <!-- 365 дней -->
-          <div class="p-4 rounded-2xl bg-white border border-warm-border flex flex-col justify-between space-y-3">
+          <div class="p-4 rounded-2xl bg-stone-50 border border-stone-200 flex flex-col justify-between space-y-3">
             <div>
               <div class="flex items-center justify-between">
-                <span class="text-[10px] font-bold uppercase tracking-wider text-warm-muted">365 дней</span>
-                <span class="text-[9px] font-bold text-amber-800 bg-amber-50 px-1.5 py-0.5 rounded">-38%</span>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-stone-500">365 дней</span>
+                <span class="text-[9px] font-bold text-amber-900 bg-amber-100 px-1.5 py-0.5 rounded">-38%</span>
               </div>
-              <div class="text-2xl font-display font-bold text-warm-dark mt-1">2 190 ₽</div>
-              <div class="text-[11px] font-semibold text-warm-dark mt-1 leading-tight">
-                Всего ~182 ₽ / месяц.<br><span class="font-normal text-warm-muted">Автопродление 1 раз в год.</span>
+              <div class="text-2xl font-display font-black text-stone-900 mt-1">2 190 ₽</div>
+              <div class="text-[11px] font-semibold text-stone-800 mt-1 leading-tight">
+                Всего ~182 ₽ в месяц.<br><span class="font-normal text-stone-500">Автопродление 1 раз в год.</span>
               </div>
             </div>
             <a href="https://t.me/" target="_blank"
-               class="w-full py-2 rounded-full bg-warm-dark hover:bg-warm-accent text-white text-xs font-semibold text-center transition-colors block">
+               class="w-full py-2 rounded-full bg-stone-900 hover:bg-orange-600 text-white text-xs font-bold text-center transition-colors block">
               Оформить
             </a>
           </div>
 
         </div>
 
-        <!-- Подвал модалки -->
-        <div class="pt-4 border-t border-warm-border flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-warm-muted">
+        <div class="pt-4 border-t border-stone-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-stone-500">
           <div class="flex items-center gap-2">
             <span>Оплата через Robokassa:</span>
-            <span class="px-2 py-0.5 bg-white border border-warm-border rounded text-[10px] font-bold text-blue-700">МИР</span>
-            <span class="px-2 py-0.5 bg-white border border-warm-border rounded text-[10px] font-bold text-green-700">СБП</span>
-            <span class="px-2 py-0.5 bg-white border border-warm-border rounded text-[10px] font-medium text-warm-dark">Карты РФ</span>
+            <span class="px-2 py-0.5 bg-stone-100 rounded text-[10px] font-bold text-blue-700">МИР</span>
+            <span class="px-2 py-0.5 bg-stone-100 rounded text-[10px] font-bold text-green-700">СБП</span>
+            <span class="px-2 py-0.5 bg-stone-100 rounded text-[10px] font-medium text-stone-700">Карты РФ</span>
           </div>
           <div class="text-[11px]">
             Отмена подписки доступна в любой момент в 1 клик
@@ -461,42 +456,40 @@
     </div>
   </div>
 
-  <!-- ================= ПОДВАЛ (АККУРАТНЫЙ, ЧИСТЫЙ, ДЛЯ РОБОКАССЫ) ================= -->
-  <footer class="border-t border-warm-border bg-white py-12 mt-auto">
+  <!-- ================= ПОДВАЛ ДЛЯ РОБОКАССЫ ================= -->
+  <footer class="border-t border-stone-200 bg-white py-12 mt-auto">
     <div class="max-w-6xl mx-auto px-6">
       
-      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-8 border-b border-warm-border text-xs text-warm-muted">
+      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-8 border-b border-stone-100 text-xs text-stone-500">
         
-        <!-- Реквизиты оператора -->
         <div class="space-y-1">
-          <div class="text-warm-dark font-semibold">Нестеров Никита Александрович</div>
+          <div class="text-stone-900 font-semibold">Нестеров Никита Александрович</div>
           <div class="flex flex-wrap items-center gap-x-4 gap-y-1">
             <span>ИНН: 660408095412</span>
             <span>Самозанятый</span>
-            <span>E-Mail: <a href="mailto:nik.nesterow201134@gmail.com" class="text-warm-dark hover:underline">nik.nesterow201134@gmail.com</a></span>
+            <span>E-Mail: <a href="mailto:nik.nesterow201134@gmail.com" class="text-stone-900 hover:underline">nik.nesterow201134@gmail.com</a></span>
           </div>
         </div>
 
-        <!-- Документы -->
         <div class="flex flex-wrap items-center gap-6 font-medium">
-          <a href="offer.html" target="_blank" class="hover:text-warm-accent transition-colors underline">
+          <a href="offer.html" target="_blank" class="hover:text-orange-600 transition-colors underline">
             Публичная оферта
           </a>
-          <a href="policy.html" target="_blank" class="hover:text-warm-accent transition-colors underline">
+          <a href="policy.html" target="_blank" class="hover:text-orange-600 transition-colors underline">
             Политика конфиденциальности
           </a>
-          <button @click="showTariffs = true" class="hover:text-warm-accent transition-colors underline">
+          <button @click="showTariffs = true" class="hover:text-orange-600 transition-colors underline">
             Тарифы
           </button>
         </div>
 
       </div>
 
-      <div class="pt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-[11px] text-warm-muted">
+      <div class="pt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-[11px] text-stone-400">
         <p>
           © 2026 Все права защищены. Любое использование или копирование материалов допускается лишь с письменного разрешения правообладателя.
         </p>
-        <div class="flex items-center gap-2 shrink-0">
+        <div class="flex items-center gap-2 shrink-0 text-stone-500">
           <span>Оплата: МИР • СБП • Robokassa</span>
         </div>
       </div>
@@ -504,17 +497,173 @@
     </div>
   </footer>
 
+  <!-- ================= THREE.JS СЦЕНА (КАТЯЩИЕСЯ АПЕЛЬСИНЫ ПО ТРАВЕ) ================= -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
-      if (window.location.hash === '#pricing' || window.location.hash === '#tariffs') {
-        setTimeout(() => {
-          const alpineData = document.querySelector('[x-data]');
-          if (alpineData && alpineData._x_dataStack) {
-            alpineData._x_dataStack[0].showTariffs = true;
-          }
-        }, 150);
+
+      const container = document.getElementById('hero-canvas');
+      if (!container) return;
+
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x13381e);
+      scene.fog = new THREE.FogExp2(0x13381e, 0.035);
+
+      const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
+      camera.position.set(0, 3.2, 9);
+      camera.lookAt(0, 1.2, 0);
+
+      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      container.appendChild(renderer.domElement);
+
+      // Теплый средиземноморский солнечный свет
+      const ambientLight = new THREE.AmbientLight(0xffeedb, 0.75);
+      scene.add(ambientLight);
+
+      const sunLight = new THREE.DirectionalLight(0xfff7e6, 1.35);
+      sunLight.position.set(6, 12, 6);
+      sunLight.castShadow = true;
+      sunLight.shadow.mapSize.width = 1024;
+      sunLight.shadow.mapSize.height = 1024;
+      scene.add(sunLight);
+
+      const rimLight = new THREE.DirectionalLight(0xff9933, 0.7);
+      rimLight.position.set(-6, 5, -3);
+      scene.add(rimLight);
+
+      // Холмистый газон (трава)
+      const groundGeo = new THREE.PlaneGeometry(36, 36, 50, 50);
+      const pos = groundGeo.attributes.position;
+      for (let i = 0; i < pos.count; i++) {
+        const x = pos.getX(i);
+        const y = pos.getY(i);
+        const z = Math.sin(x * 0.28) * 0.45 + Math.cos(y * 0.28) * 0.35;
+        pos.setZ(i, z);
       }
+      groundGeo.computeVertexNormals();
+
+      const groundMat = new THREE.MeshStandardMaterial({
+        color: 0x1f5c31,
+        roughness: 0.9,
+        metalness: 0.02,
+      });
+      const ground = new THREE.Mesh(groundGeo, groundMat);
+      ground.rotation.x = -Math.PI / 2;
+      ground.position.y = -0.4;
+      ground.receiveShadow = true;
+      scene.add(ground);
+
+      function getGroundHeight(x, z) {
+        return (Math.sin(x * 0.28) * 0.45 + Math.cos(z * 0.28) * 0.35) - 0.4;
+      }
+
+      // Функция создания апельсина с листочком
+      function createOrange(radius = 0.55) {
+        const group = new THREE.Group();
+
+        // Тело апельсина
+        const sphereGeo = new THREE.SphereGeometry(radius, 32, 32);
+        const sphereMat = new THREE.MeshStandardMaterial({
+          color: 0xff6b00,
+          roughness: 0.4,
+          metalness: 0.05,
+        });
+        const body = new THREE.Mesh(sphereGeo, sphereMat);
+        body.castShadow = true;
+        body.receiveShadow = true;
+        group.add(body);
+
+        // Зеленый черенок
+        const stemGeo = new THREE.CylinderGeometry(0.03, 0.025, 0.12, 8);
+        const stemMat = new THREE.MeshStandardMaterial({ color: 0x254714, roughness: 0.8 });
+        const stem = new THREE.Mesh(stemGeo, stemMat);
+        stem.position.y = radius + 0.04;
+        group.add(stem);
+
+        // Зеленый листик
+        const leafGeo = new THREE.ConeGeometry(0.1, 0.3, 5);
+        leafGeo.rotateZ(Math.PI / 3.2);
+        const leafMat = new THREE.MeshStandardMaterial({ color: 0x3d7e22, roughness: 0.5, side: THREE.DoubleSide });
+        const leaf = new THREE.Mesh(leafGeo, leafMat);
+        leaf.position.set(0.1, radius + 0.06, 0);
+        group.add(leaf);
+
+        group.userData = {
+          radius: radius,
+          vx: (Math.random() - 0.5) * 0.035 + 0.015,
+          vz: (Math.random() - 0.5) * 0.025,
+        };
+
+        return group;
+      }
+
+      // Создаем 6 апельсинов
+      const oranges = [];
+      for (let i = 0; i < 6; i++) {
+        const r = 0.42 + Math.random() * 0.22;
+        const orange = createOrange(r);
+        const x = -7 + (i * 2.6) + (Math.random() * 0.8 - 0.4);
+        const z = -1.5 + Math.random() * 4.5;
+        orange.position.set(x, getGroundHeight(x, z) + r, z);
+        scene.add(orange);
+        oranges.push(orange);
+      }
+
+      // Интерактив мыши
+      let mouseX = 0;
+      let targetX = 0;
+      window.addEventListener('mousemove', (e) => {
+        mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+      });
+      window.addEventListener('touchmove', (e) => {
+        if (e.touches.length > 0) {
+          mouseX = (e.touches[0].clientX / window.innerWidth - 0.5) * 2;
+        }
+      });
+
+      // Resize
+      window.addEventListener('resize', () => {
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight);
+      });
+
+      // Анимационный цикл
+      function animate() {
+        requestAnimationFrame(animate);
+
+        targetX += (mouseX * 1.2 - targetX) * 0.05;
+        camera.position.x = targetX;
+        camera.lookAt(0, 1.2, 0);
+
+        oranges.forEach((orange) => {
+          const u = orange.userData;
+
+          orange.position.x += u.vx + (mouseX * 0.012);
+          orange.position.z += u.vz;
+
+          if (orange.position.x > 9) orange.position.x = -9;
+          if (orange.position.x < -9) orange.position.x = 9;
+          if (orange.position.z > 4.5) orange.position.z = -2.5;
+          if (orange.position.z < -2.5) orange.position.z = 4.5;
+
+          const gh = getGroundHeight(orange.position.x, orange.position.z);
+          orange.position.y = gh + u.radius;
+
+          const rollSpeed = (u.vx + (mouseX * 0.012)) / u.radius;
+          orange.rotation.z -= rollSpeed;
+          orange.rotation.x += u.vz / u.radius;
+          orange.rotation.y += 0.008;
+        });
+
+        renderer.render(scene, camera);
+      }
+
+      animate();
     });
   </script>
 </body>
