@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NESTEROV — Домашнее бистро</title>
-  <meta name="description" content="Рецепты ресторанного вкуса и список продуктов на неделю. Без вечного вопроса «что приготовить сегодня».">
+  <title>NESTEROV — Домашняя гастрономия и закрытый клуб</title>
+  <meta name="description" content="Рецепты ресторанного вкуса, техники, заготовки, соусы и культура домашней кухни по подписке.">
 
   <!-- Предотвращение мигания темы (FOUC) -->
   <script>
@@ -15,7 +15,7 @@
     }
   </script>
 
-  <!-- Шрифты: Bricolage Grotesque (харизматичный гротеск в стиле Banh Mi & You) + Manrope -->
+  <!-- Шрифты: Bricolage Grotesque + Manrope -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -102,7 +102,7 @@
         }
       }">
 
-  <!-- ================= ПОЛНОШИРИННАЯ ШАПКА (В СТИЛЕ WOOSCOOW + BANH MI) ================= -->
+  <!-- ================= ПОЛНОШИРИННАЯ ШАПКА ================= -->
   <header class="sticky top-0 z-40 w-full border-b border-black/[0.06] dark:border-white/[0.08] backdrop-blur-xl transition-colors duration-300"
           style="background-color: var(--header-bg);">
     <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-4 flex items-center justify-between">
@@ -120,11 +120,6 @@
       <!-- Правая часть: Большой тумблер темы + Кнопка тарифов -->
       <div class="flex items-center gap-4 sm:gap-6">
         
-        <!-- Навигация -->
-        <a href="#faq" class="hidden md:inline-block text-xs sm:text-sm font-semibold text-stone-600 hover:text-stone-900 dark:text-stone-300 dark:hover:text-white transition-colors">
-          Вопросы
-        </a>
-
         <!-- БОЛЬШОЙ ТАКТИЛЬНЫЙ ТУМБЛЕР (Light / Dark) -->
         <button type="button" 
                 @click="toggleTheme()" 
@@ -161,39 +156,39 @@
   <main class="flex-1">
     
     <!-- Секция HERO: картинка на весь фон без рамок, контент на широкой сетке max-w-7xl -->
-    <section class="relative w-full min-h-[560px] sm:min-h-[660px] flex items-center py-16 sm:py-24 overflow-hidden">
+    <section class="relative w-full min-h-[580px] sm:min-h-[680px] flex items-center py-16 sm:py-24 overflow-hidden">
       
       <!-- ФОНОВОЕ ФОТО НА ВСЮ ШИРИНУ БЕЗ РАМКИ -->
       <div class="absolute inset-0 z-0">
         <img src="hero-food.jpg" 
-             alt="Запеченные сочные овощи" 
+             alt="Сочные запеченные овощи" 
              class="w-full h-full object-cover object-center">
         
-        <!-- Многослойный градиент для кристальной читаемости текста и сохранения аппетитности -->
+        <!-- Многослойный градиент для кристальной читаемости текста и сохранения текстуры еды -->
         <div class="absolute inset-0 bg-gradient-to-r from-black/90 via-black/75 to-black/35 sm:to-black/20"></div>
         <div class="absolute inset-0 bg-gradient-to-t from-[#0C0E0D] via-transparent to-black/30 dark:opacity-100 opacity-60"></div>
         <div class="absolute inset-0 bg-grain opacity-40 pointer-events-none"></div>
       </div>
 
-      <!-- КОНТЕНТ HERO: широкая сетка wooscoow (max-w-7xl) -->
+      <!-- КОНТЕНТ HERO: широкая сетка max-w-7xl -->
       <div class="relative z-10 max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 w-full">
         <div class="max-w-3xl space-y-7">
           
           <!-- Бейдж -->
           <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/15 backdrop-blur-md border border-white/20 text-xs font-semibold text-white tracking-wide uppercase">
             <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
-            <span>Городское бистро у вас дома</span>
+            <span>Закрытый кулинарный клуб</span>
           </div>
 
-          <!-- МОЩНЫЙ ЗАГОЛОВОК (в стиле Banh Mi & You, без 15 минут, без спринтов) -->
+          <!-- МОЩНЫЙ ЗАГОЛОВОК (отражает всю глубину кухни) -->
           <h1 class="font-display font-black text-5xl sm:text-7xl lg:text-8xl tracking-tight leading-[0.98] text-white uppercase drop-shadow-sm">
-            Ужины<br>
-            <span class="text-orange-400 sm:text-orange-500">без раздумий</span>
+            Домашняя<br>
+            <span class="text-orange-400 sm:text-orange-500">гастрономия</span>
           </h1>
 
-          <!-- ЧИСТОЕ И ЧЕСТНОЕ ОПИСАНИЕ БЕЗ ЛОЖНЫХ ОБЕЩАНИЙ -->
+          <!-- ЧИСТОЕ И ЧЕСТНОЕ ОПИСАНИЕ ВСЕГО ОБЪЕМА КАНАЛА -->
           <p class="text-lg sm:text-2xl text-stone-200 font-medium leading-relaxed max-w-2xl">
-            Понятная домашняя еда ресторанного вкуса и список продуктов на неделю. Без вечного вопроса «что приготовить сегодня».
+            Рецепты ресторанного вкуса, соусы, умные заготовки, хранение продуктов и необычные сочетания вкусов в одном закрытом сообществе.
           </p>
 
           <!-- Кнопки действий -->
@@ -214,58 +209,158 @@
 
     </section>
 
-    <!-- ================= ЧАСТЫЕ ВОПРОСЫ (FAQ) — ШИРОКИЙ ЛЕЙАУТ ================= -->
-    <section id="faq" class="max-w-5xl mx-auto px-6 sm:px-8 py-20 sm:py-28">
+    <!-- ================= ТЕМЫ И НАПРАВЛЕНИЯ КЛУБА ================= -->
+    <section class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-16 sm:py-24">
       
       <div class="mb-12 space-y-2">
-        <span class="text-xs font-bold uppercase tracking-widest text-orange-600 dark:text-orange-400">FAQ</span>
+        <span class="text-xs font-bold uppercase tracking-widest text-orange-600 dark:text-orange-400">Что внутри</span>
         <h2 class="font-display font-black text-3xl sm:text-5xl tracking-tight text-stone-900 dark:text-white">
-          Ответы на частые вопросы
+          Темы и разделы клуба
         </h2>
       </div>
 
-      <div class="space-y-4" x-data="{ open: null }">
+      <!-- Сетка 9 тем клуба -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
         
-        <div class="rounded-2xl border border-black/[0.08] dark:border-white/[0.08] overflow-hidden transition-colors"
+        <!-- 1. Завтраки -->
+        <div class="p-7 rounded-3xl border border-black/[0.07] dark:border-white/[0.08] shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1"
              style="background-color: var(--card-bg);">
-          <button @click="open = open === 1 ? null : 1"
-                  class="w-full p-6 sm:p-7 text-left flex items-center justify-between text-base sm:text-lg font-bold text-stone-900 dark:text-stone-100 focus:outline-none">
-            <span>Где выходят рецепты и списки закупки?</span>
-            <i data-lucide="chevron-down" class="w-5 h-5 text-stone-400 transition-transform shrink-0 ml-4" :class="{ 'rotate-180': open === 1 }"></i>
-          </button>
-          <div x-show="open === 1" x-collapse x-cloak class="px-6 sm:px-7 pb-7 text-sm sm:text-base text-stone-600 dark:text-stone-400 leading-relaxed">
-            В закрытом Telegram-канале. Каждую субботу вы получаете единый список продуктов на неделю и подробные пошаговые карточки блюд с понедельника по четверг.
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold uppercase tracking-wider text-orange-600 dark:text-orange-400">01</span>
+              <span class="text-lg">🍳</span>
+            </div>
+            <h3 class="font-display font-black text-stone-900 dark:text-white text-xl">Завтраки</h3>
+            <p class="text-sm text-stone-600 dark:text-stone-400 leading-relaxed">
+              От быстрых утренних идей до неспешных ресторанных бранчей выходного дня.
+            </p>
           </div>
         </div>
 
-        <div class="rounded-2xl border border-black/[0.08] dark:border-white/[0.08] overflow-hidden transition-colors"
+        <!-- 2. Блюда на несколько дней -->
+        <div class="p-7 rounded-3xl border border-black/[0.07] dark:border-white/[0.08] shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1"
              style="background-color: var(--card-bg);">
-          <button @click="open = open === 2 ? null : 2"
-                  class="w-full p-6 sm:p-7 text-left flex items-center justify-between text-base sm:text-lg font-bold text-stone-900 dark:text-stone-100 focus:outline-none">
-            <span>Нужен ли опыт в кулинарии или редкая посуда?</span>
-            <i data-lucide="chevron-down" class="w-5 h-5 text-stone-400 transition-transform shrink-0 ml-4" :class="{ 'rotate-180': open === 2 }"></i>
-          </button>
-          <div x-show="open === 2" x-collapse x-cloak class="px-6 sm:px-7 pb-7 text-sm sm:text-base text-stone-600 dark:text-stone-400 leading-relaxed">
-            Никаких су-видов и сложного инвентаря. Достаточно обычной сковороды, ножа и доски. Все действия понятны и адаптированы под обычную домашнюю кухню.
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold uppercase tracking-wider text-orange-600 dark:text-orange-400">02</span>
+              <span class="text-lg">🥘</span>
+            </div>
+            <h3 class="font-display font-black text-stone-900 dark:text-white text-xl">На несколько дней</h3>
+            <p class="text-sm text-stone-600 dark:text-stone-400 leading-relaxed">
+              Умные блюда, которые со временем становятся только вкуснее и спасают от ежедневной готовки.
+            </p>
           </div>
         </div>
 
-        <div class="rounded-2xl border border-black/[0.08] dark:border-white/[0.08] overflow-hidden transition-colors"
+        <!-- 3. Заготовки в морозилку -->
+        <div class="p-7 rounded-3xl border border-black/[0.07] dark:border-white/[0.08] shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1"
              style="background-color: var(--card-bg);">
-          <button @click="open = open === 3 ? null : 3"
-                  class="w-full p-6 sm:p-7 text-left flex items-center justify-between text-base sm:text-lg font-bold text-stone-900 dark:text-stone-100 focus:outline-none">
-            <span>Как устроена отмена подписки?</span>
-            <i data-lucide="chevron-down" class="w-5 h-5 text-stone-400 transition-transform shrink-0 ml-4" :class="{ 'rotate-180': open === 3 }"></i>
-          </button>
-          <div x-show="open === 3" x-collapse x-cloak class="px-6 sm:px-7 pb-7 text-sm sm:text-base text-stone-600 dark:text-stone-400 leading-relaxed">
-            Никаких скрытых условий. Отменить автопродление можно в любой момент в 1 клик через ссылку в чеке или обратившись на почту поддержки. Доступ останется до конца оплаченного срока.
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold uppercase tracking-wider text-orange-600 dark:text-orange-400">03</span>
+              <span class="text-lg">🧊</span>
+            </div>
+            <h3 class="font-display font-black text-stone-900 dark:text-white text-xl">Заготовки в морозилку</h3>
+            <p class="text-sm text-stone-600 dark:text-stone-400 leading-relaxed">
+              Правильная заморозка готовой еды и полуфабрикатов без потери текстуры и вкуса.
+            </p>
+          </div>
+        </div>
+
+        <!-- 4. Хранение продуктов -->
+        <div class="p-7 rounded-3xl border border-black/[0.07] dark:border-white/[0.08] shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1"
+             style="background-color: var(--card-bg);">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold uppercase tracking-wider text-orange-600 dark:text-orange-400">04</span>
+              <span class="text-lg">🥦</span>
+            </div>
+            <h3 class="font-display font-black text-stone-900 dark:text-white text-xl">Хранение продуктов</h3>
+            <p class="text-sm text-stone-600 dark:text-stone-400 leading-relaxed">
+              Как сохранять зелень и овощи свежими неделями, и почему помидоры с огурцами нельзя хранить вместе.
+            </p>
+          </div>
+        </div>
+
+        <!-- 5. Сервировка -->
+        <div class="p-7 rounded-3xl border border-black/[0.07] dark:border-white/[0.08] shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1"
+             style="background-color: var(--card-bg);">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold uppercase tracking-wider text-orange-600 dark:text-orange-400">05</span>
+              <span class="text-lg">🍽️</span>
+            </div>
+            <h3 class="font-display font-black text-stone-900 dark:text-white text-xl">Сервировка</h3>
+            <p class="text-sm text-stone-600 dark:text-stone-400 leading-relaxed">
+              Простые правила ресторанной подачи дома за 30 секунд: форма тарелки, контраст и соусы-подушки.
+            </p>
+          </div>
+        </div>
+
+        <!-- 6. На компанию и праздники -->
+        <div class="p-7 rounded-3xl border border-black/[0.07] dark:border-white/[0.08] shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1"
+             style="background-color: var(--card-bg);">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold uppercase tracking-wider text-orange-600 dark:text-orange-400">06</span>
+              <span class="text-lg">🥂</span>
+            </div>
+            <h3 class="font-display font-black text-stone-900 dark:text-white text-xl">На компанию и праздники</h3>
+            <p class="text-sm text-stone-600 dark:text-stone-400 leading-relaxed">
+              Большие эффектные блюда в центр стола, которые вызывают восторг и не утомляют хозяев.
+            </p>
+          </div>
+        </div>
+
+        <!-- 7. Блюда на вечер -->
+        <div class="p-7 rounded-3xl border border-black/[0.07] dark:border-white/[0.08] shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1"
+             style="background-color: var(--card-bg);">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold uppercase tracking-wider text-orange-600 dark:text-orange-400">07</span>
+              <span class="text-lg">🍷</span>
+            </div>
+            <h3 class="font-display font-black text-stone-900 dark:text-white text-xl">Блюда на вечер</h3>
+            <p class="text-sm text-stone-600 dark:text-stone-400 leading-relaxed">
+              Комфорт-фуд и вкусняшки для удовольствия после долгого дня: от самых простых до гастрономических.
+            </p>
+          </div>
+        </div>
+
+        <!-- 8. Соусы -->
+        <div class="p-7 rounded-3xl border border-black/[0.07] dark:border-white/[0.08] shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1"
+             style="background-color: var(--card-bg);">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold uppercase tracking-wider text-orange-600 dark:text-orange-400">08</span>
+              <span class="text-lg">🥣</span>
+            </div>
+            <h3 class="font-display font-black text-stone-900 dark:text-white text-xl">Соусы</h3>
+            <p class="text-sm text-stone-600 dark:text-stone-400 leading-relaxed">
+              Базовые заправки и быстрые эмульсии из того, что есть в холодильнике, меняющие любое блюдо.
+            </p>
+          </div>
+        </div>
+
+        <!-- 9. Необычные сочетания продуктов -->
+        <div class="p-7 rounded-3xl border border-black/[0.07] dark:border-white/[0.08] shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1"
+             style="background-color: var(--card-bg);">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold uppercase tracking-wider text-orange-600 dark:text-orange-400">09</span>
+              <span class="text-lg">💡</span>
+            </div>
+            <h3 class="font-display font-black text-stone-900 dark:text-white text-xl">Необычные сочетания</h3>
+            <p class="text-sm text-stone-600 dark:text-stone-400 leading-relaxed">
+              Фудпейринг и новые вкусовые пары: от кофе со свеклой до неожиданных сочетаний приправ и текстур.
+            </p>
           </div>
         </div>
 
       </div>
 
-      <!-- Призыв внизу -->
-      <div class="mt-14 text-center">
+      <!-- Призыв внизу секции -->
+      <div class="mt-16 text-center">
         <button @click="showTariffs = true"
                 class="px-9 py-4 rounded-full bg-orange-600 hover:bg-orange-500 text-white font-display font-bold text-base sm:text-lg tracking-wide shadow-lg shadow-orange-600/25 transition-all hover:scale-[1.02] active:scale-95">
           Выбрать подписку
@@ -276,7 +371,7 @@
 
   </main>
 
-  <!-- ================= МОДАЛЬНОЕ ОКНО ТАРИФОВ (ЧИСТОЕ, БЕЗ СЛОВА СПРИНТ) ================= -->
+  <!-- ================= МОДАЛЬНОЕ ОКНО ТАРИФОВ (ЧЕСТНЫЕ ЦЕНЫ БЕЗ СЛОВА «ВСЕГО») ================= -->
   <div x-show="showTariffs" 
        x-cloak 
        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md"
@@ -294,7 +389,7 @@
       <div class="flex items-center justify-between pb-4 border-b border-black/10 dark:border-white/10">
         <div>
           <h3 class="font-display font-black text-2xl text-stone-900 dark:text-white">Выбор подписки</h3>
-          <p class="text-xs sm:text-sm text-stone-500 dark:text-stone-400 mt-0.5">Доступ к закрытому Telegram-каналу, меню и базе ресторанных техник</p>
+          <p class="text-xs sm:text-sm text-stone-500 dark:text-stone-400 mt-0.5">Доступ к закрытому Telegram-каналу со всеми рецептами, техниками и базой знаний</p>
         </div>
         <button @click="showTariffs = false" 
                 class="w-9 h-9 rounded-full bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 text-stone-700 dark:text-stone-300 flex items-center justify-center transition-colors">
@@ -333,7 +428,7 @@
             </div>
             <div class="text-3xl font-display font-black text-stone-900 dark:text-white mt-2">750 ₽</div>
             <div class="text-xs text-stone-600 dark:text-stone-300 mt-1 leading-relaxed font-medium">
-              Всего 250 ₽ в месяц.<br>
+              250 ₽ в месяц.<br>
               <span class="text-[11px] text-stone-400 dark:text-stone-500 font-normal">Автопродление раз в 90 дней.</span>
             </div>
           </div>
@@ -352,7 +447,7 @@
             </div>
             <div class="text-3xl font-display font-black text-stone-900 dark:text-white mt-2">1 320 ₽</div>
             <div class="text-xs text-orange-600 dark:text-orange-400 mt-1 leading-relaxed font-semibold">
-              Всего 220 ₽ в месяц.<br>
+              220 ₽ в месяц.<br>
               <span class="text-[11px] text-stone-500 dark:text-stone-400 font-normal">Автопродление раз в 180 дней.</span>
             </div>
           </div>
@@ -371,7 +466,7 @@
             </div>
             <div class="text-3xl font-display font-black text-stone-900 dark:text-white mt-2">2 190 ₽</div>
             <div class="text-xs text-stone-600 dark:text-stone-300 mt-1 leading-relaxed font-medium">
-              Всего 182 ₽ в месяц.<br>
+              182 ₽ в месяц.<br>
               <span class="text-[11px] text-stone-400 dark:text-stone-500 font-normal">Автопродление 1 раз в год.</span>
             </div>
           </div>
@@ -399,7 +494,7 @@
     </div>
   </div>
 
-  <!-- ================= ПОДВАЛ (ШИРОКИЙ, СТИЛЬ WOOSCOOW) ================= -->
+  <!-- ================= ПОДВАЛ ================= -->
   <footer class="border-t border-black/[0.08] dark:border-white/[0.08] py-12 mt-auto transition-colors"
           style="background-color: var(--card-bg);">
     <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
