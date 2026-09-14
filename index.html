@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Клуб ужинов Нестерова — Домашнее городское бистро за 15 минут</title>
+  <meta name="description" content="Закрытый Telegram-клуб быстрых ресторанных ужинов дома за 15 минут. Единый список закупки на неделю, точные техкарты, экономия от 30 000 ₽ на доставках.">
+
+  <!-- Шрифты: Manrope (заголовки) + Onest (основной текст) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Onest:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['"Manrope"', 'sans-serif'],
+            sans: ['"Onest"', 'sans-serif'],
+          },
+          colors: {
+            parchment: '#FAF8F5',
+            linen: '#F3EFEA',
+            charcoal: '#1A1816',
+            espresso: '#2B2622',
+            terracotta: '#C2410C',
+            amberwood: '#D97706',
+            rosemary: '#3F6212',
+            muted: '#78716C',
+            bordercol: 'rgba(26, 24, 22, 0.08)'
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Alpine.js -->
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+  <style>
+    [x-cloak] { display: none !important; }
+    
+    /* Текстура легкого бумажного зерна */
+    .bg-paper-grain {
+      background-image: radial-gradient(rgba(26, 24, 22, 0.04) 1px, transparent 0);
+      background-size: 24px 24px;
+    }
+
+    /* Архитектурные линии сетки */
+    .grid-border {
+      border-color: rgba(26, 24, 22, 0.08);
+    }
+  </style>
+</head>
+<body class="bg-parchment text-charcoal font-sans antialiased selection:bg-charcoal selection:text-parchment relative" x-data="gastroApp()">
+
+  <!-- ================= HEADER / НАВИГАЦИЯ ================= -->
+  <header class="sticky top-0 z-40 bg-parchment/90 backdrop-blur-md border-b grid-border">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
+      
+      <!-- Логотип -->
+      <a href="#" class="flex items-center gap-2 group">
+        <div class="w-8 h-8 rounded-lg bg-charcoal text-parchment flex items-center justify-center font-display font-bold text-sm group-hover:bg-terracotta transition-colors">
+          Н
+        </div>
+        <div class="flex flex-col">
+          <span class="font-display font-extrabold tracking-tight text-base sm:text-lg leading-none">КЛУБ УЖИНОВ</span>
+          <span class="text-[10px] font-mono tracking-widest text-muted uppercase mt-0.5">НЕСТЕРОВ // БИСТРО</span>
+        </div>
+      </a>
+
+      <!-- Меню (десктоп) -->
+      <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-muted">
+        <a href="#concept" class="hover:text-charcoal transition-colors">Концепция</a>
+        <a href="#weekly-pack" class="hover:text-charcoal transition-colors">Меню недели</a>
+        <a href="#pillars" class="hover:text-charcoal transition-colors">Что внутри</a>
+        <a href="#pricing" class="hover:text-charcoal transition-colors">Тарифы</a>
+        <a href="#faq" class="hover:text-charcoal transition-colors">Вопросы</a>
+      </nav>
+
+      <!-- Главная кнопка -->
+      <a href="#pricing" 
+         class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-charcoal hover:bg-terracotta text-parchment font-display font-semibold text-xs sm:text-sm tracking-wide transition-colors shadow-sm">
+        <span>Вступить в клуб</span>
+        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+      </a>
+
+    </div>
+  </header>
+
+  <!-- ================= HERO SECTION ================= -->
+  <section class="relative pt-12 sm:pt-20 pb-16 sm:pb-24 overflow-hidden border-b grid-border bg-paper-grain">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        
+        <!-- Левая колонка: Текст и Оффер -->
+        <div class="lg:col-span-7 space-y-6 sm:space-y-8">
+          
+          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-linen border grid-border text-xs font-mono font-medium text-charcoal uppercase tracking-wider">
+            <span class="w-2 h-2 rounded-full bg-rosemary animate-pulse"></span>
+            <span>ЗАКРЫТЫЙ TELEGRAM-КЛУБ УЖИНОВ</span>
+          </div>
+
+          <h1 class="font-display font-extrabold text-3xl sm:text-5xl lg:text-6xl text-charcoal tracking-tight leading-[1.08]">
+            Ресторанные ужины дома за 15 минут.
+            <span class="text-terracotta block mt-1">Без шеф-поваров и счетов за доставку.</span>
+          </h1>
+
+          <p class="text-base sm:text-lg text-muted leading-relaxed max-w-2xl font-light">
+            Готовая еженедельная система для тех, кто устал ломать голову над вопросом «что сегодня приготовить» и сливать по 40 000 ₽ в месяц на доставку. Единый список продуктов на неделю + 4 быстрых ужина, где продукты расходуются под ноль.
+          </p>
+
+          <!-- 4 ключевых факта -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
+            <div class="p-3.5 bg-white rounded-xl border grid-border">
+              <div class="font-display font-bold text-lg text-charcoal">12–15 мин</div>
+              <div class="text-xs text-muted mt-0.5">у плиты в будни</div>
+            </div>
+            <div class="p-3.5 bg-white rounded-xl border grid-border">
+              <div class="font-display font-bold text-lg text-charcoal">Магнит</div>
+              <div class="text-xs text-muted mt-0.5">продукты у дома</div>
+            </div>
+            <div class="p-3.5 bg-white rounded-xl border grid-border">
+              <div class="font-display font-bold text-lg text-charcoal">от 30 000 ₽</div>
+              <div class="text-xs text-muted mt-0.5">экономия в месяц</div>
+            </div>
+            <div class="p-3.5 bg-white rounded-xl border grid-border">
+              <div class="font-display font-bold text-lg text-charcoal">3 прибора</div>
+              <div class="text-xs text-muted mt-0.5">сковорода/печь/гриль</div>
+            </div>
+          </div>
+
+          <!-- Кнопки действия -->
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-2">
+            <a href="#pricing" 
+               class="px-8 py-4 rounded-xl bg-charcoal hover:bg-terracotta text-white font-display font-bold text-base tracking-wide transition-all shadow-md hover:shadow-lg text-center flex items-center justify-center gap-3 group">
+              <span>Вступить в клуб от 290 ₽/мес</span>
+              <i data-lucide="arrow-right" class="w-5 h-5 group-hover:translate-x-1 transition-transform"></i>
+            </a>
+
+            <a href="#weekly-pack" 
+               class="px-6 py-4 rounded-xl border grid-border bg-white hover:bg-linen text-charcoal font-display font-semibold text-sm tracking-wide transition-colors text-center">
+              Посмотреть меню недели ↓
+            </a>
+          </div>
+
+          <div class="flex items-center gap-2 text-xs text-muted pt-1">
+            <i data-lucide="check-circle-2" class="w-4 h-4 text-rosemary"></i>
+            <span>Вход сразу после оплаты. Отмена подписки в 1 клик в любой момент.</span>
+          </div>
+
+        </div>
+
+        <!-- Правая колонка: Bento-визуал недели -->
+        <div class="lg:col-span-5 relative">
+          
+          <div class="relative rounded-3xl overflow-hidden border grid-border bg-white shadow-xl">
+            
+            <!-- Картинка ужина -->
+            <div class="relative h-72 sm:h-80 overflow-hidden">
+              <img src="https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=1000&auto=format&fit=crop" 
+                   alt="Ужин в стиле бистро: сочное бедро с розмарином и овощами" 
+                   class="w-full h-full object-cover">
+              
+              <div class="absolute inset-0 bg-gradient-to-t from-charcoal/80 via-transparent to-transparent"></div>
+              
+              <div class="absolute bottom-4 left-4 right-4 text-white flex items-end justify-between">
+                <div>
+                  <span class="px-2.5 py-1 rounded-md bg-white/20 backdrop-blur-md text-[11px] font-mono uppercase tracking-wider">
+                    УЖИН №1 // ПН
+                  </span>
+                  <div class="font-display font-bold text-lg sm:text-xl mt-1.5">
+                    Хрустящее бедро с карамелизованным кабачком
+                  </div>
+                </div>
+                <div class="text-right shrink-0">
+                  <span class="text-xs text-stone-300">Время:</span>
+                  <div class="font-mono font-bold text-sm text-amber-300">12 мин</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Плашка со списком закупки в стиле заметок телефона -->
+            <div class="p-5 bg-espresso text-stone-200">
+              
+              <div class="flex items-center justify-between border-b border-white/10 pb-3 mb-3">
+                <div class="flex items-center gap-2">
+                  <div class="w-2.5 h-2.5 rounded-full bg-amber-400"></div>
+                  <span class="font-mono text-xs text-stone-300 font-bold uppercase tracking-wider">ЧЕК-ЛИСТ ЗАКУПКИ НА НЕДЕЛЮ</span>
+                </div>
+                <span class="text-[11px] font-mono text-stone-400">4 УЖИНА // 0 ОТХОДОВ</span>
+              </div>
+
+              <div class="space-y-2 text-xs font-mono">
+                <div class="flex items-center justify-between">
+                  <span class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-rosemary"></i> Филе бедра куриное (600 г)</span>
+                  <span class="text-stone-400">Пн, Ср</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-rosemary"></i> Домашний фарш говядина/свинина (400 г)</span>
+                  <span class="text-stone-400">Вт, Чт</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-rosemary"></i> Кабачок грунтовой (2 шт)</span>
+                  <span class="text-stone-400">Пн, Чт</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-rosemary"></i> Картофель для запекания (600 г)</span>
+                  <span class="text-stone-400">Ср</span>
+                </div>
+              </div>
+
+              <div class="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-[11px] text-stone-400">
+                <span>Итого по чеку в «Магните»:</span>
+                <span class="font-mono font-bold text-white text-sm">~ 1 120 ₽ (на 4 дня)</span>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= СЕКЦИЯ ПРОБЛЕМЫ / КОНТРАСТ ================= -->
+  <section id="concept" class="py-16 sm:py-24 border-b grid-border">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="max-w-3xl mx-auto text-center space-y-4 mb-14 sm:mb-20">
+        <div class="font-mono text-xs uppercase tracking-widest text-terracotta">[ ЛОВУШКА ГОРОДСКОГО ЖИТЕЛЯ ]</div>
+        <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-charcoal tracking-tight">
+          Почему мы тратим 40 000 ₽ на еду,<br class="hidden sm:inline"> но каждый вечер страдаем у холодильника?
+        </h2>
+        <p class="text-muted text-base leading-relaxed">
+          После рабочего дня мозг перегружен. У вас нет сил изобретать рецепты из интернета с 15 незнакомыми специями и стоять у плиты по полтора часа.
+        </p>
+      </div>
+
+      <!-- Контраст 2 колонок -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        
+        <!-- Минус: Как сейчас -->
+        <div class="p-8 rounded-3xl bg-white border border-red-200/70 shadow-sm space-y-6 relative overflow-hidden">
+          <div class="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center font-bold text-lg">
+            ✕
+          </div>
+          <h3 class="font-display text-2xl font-bold text-charcoal">
+            Обычный вечер без системы
+          </h3>
+          <ul class="space-y-4 text-sm text-stone-600">
+            <li class="flex items-start gap-3">
+              <span class="text-red-500 font-bold mt-0.5">•</span>
+              <span><strong>20:15, голодный после работы:</strong> 40 минут листаете Яндекс Еду или Самокат, не зная, чего именно хочется.</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-red-500 font-bold mt-0.5">•</span>
+              <span><strong>Чек 1 500 – 2 000 ₽:</strong> еда приезжает через 1.5 часа остывшей, размокшей и с чувством вины за потраченные деньги.</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-red-500 font-bold mt-0.5">•</span>
+              <span><strong>Либо сгнивший холодильник:</strong> спонтанно накупили продуктов на 4 000 ₽, приготовили один раз, а остальное засохло в лотках.</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-red-500 font-bold mt-0.5">•</span>
+              <span><strong>Тяжесть и апатия:</strong> фастфуд глушит энергию, а готовка ассоциируется с горой немытой посуды.</span>
+            </li>
+          </ul>
+          <div class="p-4 rounded-xl bg-red-50/60 text-xs font-mono text-red-700">
+            ИТОГ: -35 000 ₽ / месяц на доставку + постоянный стресс «что съесть»
+          </div>
+        </div>
+
+        <!-- Плюс: С клубом -->
+        <div class="p-8 rounded-3xl bg-charcoal text-parchment shadow-xl space-y-6 relative overflow-hidden">
+          <div class="w-10 h-10 rounded-xl bg-rosemary text-white flex items-center justify-center font-bold text-lg">
+            ✓
+          </div>
+          <h3 class="font-display text-2xl font-bold text-white">
+            Вечер с клубом за 15 минут
+          </h3>
+          <ul class="space-y-4 text-sm text-stone-300">
+            <li class="flex items-start gap-3">
+              <span class="text-rosemary font-bold mt-0.5">•</span>
+              <span><strong>Полная ясность:</strong> в выходные вы купили точный пак по списку за 15 минут в ближайшем супермаркете.</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-rosemary font-bold mt-0.5">•</span>
+              <span><strong>13 минут активного времени:</strong> сковорода, 4 ингредиента, простой соус из пригарок — горячий сочный ужин на столе.</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-rosemary font-bold mt-0.5">•</span>
+              <span><strong>Себестоимость порции 180–240 ₽:</strong> свежее ресторанное качество за копейки без переплаты за курьеров.</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-rosemary font-bold mt-0.5">•</span>
+              <span><strong>Чистая кухня:</strong> всего 1 сковорода и 1 нож. Никакой горы кастрюль в раковине на ночь.</span>
+            </li>
+          </ul>
+          <div class="p-4 rounded-xl bg-white/10 text-xs font-mono text-amber-300">
+            ИТОГ: +30 000 ₽ в кошельке + вкуснейшая еда каждый день без усилий
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= СЕКЦИЯ НЕДЕЛЬНОГО ПАКА (ИНТЕРАКТИВ) ================= -->
+  <section id="weekly-pack" class="py-16 sm:py-24 border-b grid-border bg-linen/50" x-data="{ activeDay: 'mon' }">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+        <div class="space-y-3">
+          <div class="font-mono text-xs uppercase tracking-widest text-terracotta">[ АНАТОМИЯ НЕДЕЛЬНОГО ПАКА ]</div>
+          <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-charcoal tracking-tight">
+            Как устроен спринт на неделю
+          </h2>
+          <p class="text-muted text-sm sm:text-base max-w-xl">
+            По пятницам в закрытом канале публикуется готовый пак на следующую неделю. Вы покупаете продукты один раз, и они полностью расходуются к четвергу.
+          </p>
+        </div>
+
+        <!-- Переключалка дней -->
+        <div class="flex items-center gap-1.5 p-1.5 bg-white rounded-2xl border grid-border self-start md:self-auto overflow-x-auto max-w-full">
+          <button @click="activeDay = 'mon'" 
+                  :class="activeDay === 'mon' ? 'bg-charcoal text-white font-bold' : 'text-muted hover:text-charcoal'" 
+                  class="px-4 py-2 rounded-xl text-xs font-display transition-all whitespace-nowrap">
+            ПН // Ужин 1
+          </button>
+          <button @click="activeDay = 'tue'" 
+                  :class="activeDay === 'tue' ? 'bg-charcoal text-white font-bold' : 'text-muted hover:text-charcoal'" 
+                  class="px-4 py-2 rounded-xl text-xs font-display transition-all whitespace-nowrap">
+            ВТ // Ужин 2
+          </button>
+          <button @click="activeDay = 'wed'" 
+                  :class="activeDay === 'wed' ? 'bg-charcoal text-white font-bold' : 'text-muted hover:text-charcoal'" 
+                  class="px-4 py-2 rounded-xl text-xs font-display transition-all whitespace-nowrap">
+            СР // Ужин 3
+          </button>
+          <button @click="activeDay = 'thu'" 
+                  :class="activeDay === 'thu' ? 'bg-charcoal text-white font-bold' : 'text-muted hover:text-charcoal'" 
+                  class="px-4 py-2 rounded-xl text-xs font-display transition-all whitespace-nowrap">
+            ЧТ // Ужин 4
+          </button>
+        </div>
+      </div>
+
+      <!-- Карточка выбранного ужина -->
+      <div class="bg-white rounded-3xl border grid-border p-6 sm:p-10 shadow-sm">
+        
+        <!-- Понедельник -->
+        <div x-show="activeDay === 'mon'" x-cloak class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <div class="lg:col-span-6 space-y-5">
+            <div class="flex items-center gap-3">
+              <span class="px-3 py-1 bg-linen rounded-full font-mono text-xs font-bold text-charcoal">ПОНЕДЕЛЬНИК</span>
+              <span class="font-mono text-xs text-muted">12 МИНУТ // СКОВОРОДА / АЭРОГРИЛЬ</span>
+            </div>
+            <h3 class="font-display text-2xl sm:text-3xl font-extrabold text-charcoal">
+              Хрустящее филе бедра с карамелизованным кабачком
+            </h3>
+            <p class="text-muted text-sm leading-relaxed">
+              Бедро выкладываем кожей вниз на холодную сковороду — жир медленно вытапливается, давая чистый стеклянный хруст. Кабачок нарезаем толстыми полукольцами и обжариваем в том же вытопленном курином жире до сладковатой золотистой корочки.
+            </p>
+            <div class="p-4 bg-parchment rounded-2xl border grid-border space-y-2">
+              <div class="font-mono text-xs font-bold text-charcoal uppercase">Секрет вкуса:</div>
+              <div class="text-xs text-stone-600">
+                Соус собирается прямо на сковороде за 40 секунд: убираем мясо, капаем сок лимона или бальзамик, кусочек холодного масла (20 г) и соскабливаем лопаткой все прижарки со дна.
+              </div>
+            </div>
+          </div>
+          <div class="lg:col-span-6 h-72 sm:h-96 rounded-2xl overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=1000&auto=format&fit=crop" 
+                 alt="Куриное бедро с кабачком" class="w-full h-full object-cover">
+          </div>
+        </div>
+
+        <!-- Вторник -->
+        <div x-show="activeDay === 'tue'" x-cloak class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <div class="lg:col-span-6 space-y-5">
+            <div class="flex items-center gap-3">
+              <span class="px-3 py-1 bg-linen rounded-full font-mono text-xs font-bold text-charcoal">ВТОРНИК</span>
+              <span class="font-mono text-xs text-muted">15 МИНУТ // ОДНА СКОВОРОДА</span>
+            </div>
+            <h3 class="font-display text-2xl sm:text-3xl font-extrabold text-charcoal">
+              Сочные митболы в томатно-сливочном соусе с пенне
+            </h3>
+            <p class="text-muted text-sm leading-relaxed">
+              Митболы из домашнего фарша быстро прихватываем на сильном огне до румянца. Вливаем томаты в собственном соку, ложку сливок и зубчик давленого чеснока. Паста варится параллельно 9 минут и сразу отправляется доходить в соус.
+            </p>
+            <div class="p-4 bg-parchment rounded-2xl border grid-border space-y-2">
+              <div class="font-mono text-xs font-bold text-charcoal uppercase">Секрет вкуса:</div>
+              <div class="text-xs text-stone-600">
+                Щепотка сахара нейтрализует лишнюю кислоту томатов, а крахмальная вода из-под пасты эмульгирует соус до шелковистого ресторанного глянца.
+              </div>
+            </div>
+          </div>
+          <div class="lg:col-span-6 h-72 sm:h-96 rounded-2xl overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1551183053-bf91a1d81141?q=80&w=1000&auto=format&fit=crop" 
+                 alt="Митболы в томатном соусе" class="w-full h-full object-cover">
+          </div>
+        </div>
+
+        <!-- Среда -->
+        <div x-show="activeDay === 'wed'" x-cloak class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <div class="lg:col-span-6 space-y-5">
+            <div class="flex items-center gap-3">
+              <span class="px-3 py-1 bg-linen rounded-full font-mono text-xs font-bold text-charcoal">СРЕДА</span>
+              <span class="font-mono text-xs text-muted">14 МИН АКТИВНО // ДУХОВКА / АЭРОГРИЛЬ</span>
+            </div>
+            <h3 class="font-display text-2xl sm:text-3xl font-extrabold text-charcoal">
+              Печеный картофель с хрустящими краями и курицей
+            </h3>
+            <p class="text-muted text-sm leading-relaxed">
+              Картофель режем дольками, присыпаем сухим чесноком, каплей масла и крупной солью. Запекаем при 210°C. Оставшееся куриное бедро обжариваем ломтиками до золотистой корочки с веточкой розмарина.
+            </p>
+            <div class="p-4 bg-parchment rounded-2xl border grid-border space-y-2">
+              <div class="font-mono text-xs font-bold text-charcoal uppercase">Секрет вкуса:</div>
+              <div class="text-xs text-stone-600">
+                Быстрый холодный соус на сметане: ложка дижонской горчицы, немного укропа и соленый огурец кубиком. Никакого покупного майонеза.
+              </div>
+            </div>
+          </div>
+          <div class="lg:col-span-6 h-72 sm:h-96 rounded-2xl overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1518492104633-130d0cc84637?q=80&w=1000&auto=format&fit=crop" 
+                 alt="Печеный картофель с курицей" class="w-full h-full object-cover">
+          </div>
+        </div>
+
+        <!-- Четверг -->
+        <div x-show="activeDay === 'thu'" x-cloak class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <div class="lg:col-span-6 space-y-5">
+            <div class="flex items-center gap-3">
+              <span class="px-3 py-1 bg-linen rounded-full font-mono text-xs font-bold text-charcoal">ЧЕТВЕРГ</span>
+              <span class="font-mono text-xs text-muted">11 МИНУТ // ФИНИШ СПРИНТА</span>
+            </div>
+            <h3 class="font-display text-2xl sm:text-3xl font-extrabold text-charcoal">
+              Быстрая сковорода из фарша, кабачка и чесночного масла
+            </h3>
+            <p class="text-muted text-sm leading-relaxed">
+              Остатки фарша разбиваем лопаткой на раскаленной сковороде с хрустящим кабачком, каплей соевого соуса и зеленым луком. Все продукты из закупки расходуются ровно к пятнице, в холодильнике ничего не пропало.
+            </p>
+            <div class="p-4 bg-parchment rounded-2xl border grid-border space-y-2">
+              <div class="font-mono text-xs font-bold text-charcoal uppercase">Секрет вкуса:</div>
+              <div class="text-xs text-stone-600">
+                Подача на широкий подогретый рис или как начинка в теплый лаваш. Сочно, хрустяще и сытно.
+              </div>
+            </div>
+          </div>
+          <div class="lg:col-span-6 h-72 sm:h-96 rounded-2xl overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1543339308-43e59d6b73a6?q=80&w=1000&auto=format&fit=crop" 
+                 alt="Быстрая сковорода с овощами и мясом" class="w-full h-full object-cover">
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= СТОЛПЫ КЛУБА (ЧТО ВНУТРИ) ================= -->
+  <section id="pillars" class="py-16 sm:py-24 border-b grid-border">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="max-w-3xl space-y-3 mb-14">
+        <div class="font-mono text-xs uppercase tracking-widest text-terracotta">[ БАЗА ЗНАНИЙ И СИСТЕМА ]</div>
+        <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-charcoal tracking-tight">
+          Что вы получаете внутри клуба
+        </h2>
+        <p class="text-muted text-sm sm:text-base">
+          Это не просто сборник рецептов. Это прикладная кулинарная система, которая останется с вами на всю жизнь.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <!-- Карточка 1 -->
+        <div class="p-8 rounded-3xl bg-white border grid-border space-y-4 hover:border-charcoal/30 transition-colors">
+          <div class="w-10 h-10 rounded-2xl bg-linen flex items-center justify-center text-terracotta">
+            <i data-lucide="calendar-check" class="w-5 h-5"></i>
+          </div>
+          <h3 class="font-display text-xl font-bold text-charcoal">Еженедельный спринт</h3>
+          <p class="text-muted text-sm leading-relaxed">
+            Чек-лист закупки на неделю + 4 ужина на 12–15 минут. Никакой вечерней паники и спонтанных лишних трат в супермаркете.
+          </p>
+        </div>
+
+        <!-- Карточка 2 -->
+        <div class="p-8 rounded-3xl bg-white border grid-border space-y-4 hover:border-charcoal/30 transition-colors">
+          <div class="w-10 h-10 rounded-2xl bg-linen flex items-center justify-center text-rosemary">
+            <i data-lucide="flame" class="w-5 h-5"></i>
+          </div>
+          <h3 class="font-display text-xl font-bold text-charcoal">Анатомия вкуса за 1 мин</h3>
+          <p class="text-muted text-sm leading-relaxed">
+            Как собирать соусы из пригарок на сковороде, правило баланса кислоты и дешевые натуральные усилители умами без химии.
+          </p>
+        </div>
+
+        <!-- Карточка 3 -->
+        <div class="p-8 rounded-3xl bg-white border grid-border space-y-4 hover:border-charcoal/30 transition-colors">
+          <div class="w-10 h-10 rounded-2xl bg-linen flex items-center justify-center text-amberwood">
+            <i data-lucide="utensils" class="w-5 h-5"></i>
+          </div>
+          <h3 class="font-display text-xl font-bold text-charcoal">Сетап без лишнего хлама</h3>
+          <p class="text-muted text-sm leading-relaxed">
+            Один рабочий шеф-нож вместо набора за 20 тысяч, быстрая правка за 30 секунд и тяжелая сковорода вместо тонкого тефлона.
+          </p>
+        </div>
+
+        <!-- Карточка 4 -->
+        <div class="p-8 rounded-3xl bg-white border grid-border space-y-4 hover:border-charcoal/30 transition-colors">
+          <div class="w-10 h-10 rounded-2xl bg-linen flex items-center justify-center text-charcoal">
+            <i data-lucide="heart-pulse" class="w-5 h-5"></i>
+          </div>
+          <h3 class="font-display text-xl font-bold text-charcoal">Честное КБЖУ для мозга</h3>
+          <p class="text-muted text-sm leading-relaxed">
+            Никаких сухих куриных грудок без соли. Сытная, сочная белковая еда, которая насыщает и дарит дофамин без вечерних срывов на сладкое.
+          </p>
+        </div>
+
+        <!-- Карточка 5 -->
+        <div class="p-8 rounded-3xl bg-white border grid-border space-y-4 hover:border-charcoal/30 transition-colors">
+          <div class="w-10 h-10 rounded-2xl bg-linen flex items-center justify-center text-terracotta">
+            <i data-lucide="message-square" class="w-5 h-5"></i>
+          </div>
+          <h3 class="font-display text-xl font-bold text-charcoal">Подсказки и замены</h3>
+          <p class="text-muted text-sm leading-relaxed">
+            В комментариях под каждым ужином дня автор подсказывает, чем заменить ингредиент под ваш вкус или то, что уже есть дома.
+          </p>
+        </div>
+
+        <!-- Карточка 6 -->
+        <div class="p-8 rounded-3xl bg-charcoal text-white space-y-4 flex flex-col justify-between">
+          <div>
+            <div class="text-amber-400 text-xs font-mono font-bold uppercase tracking-wider mb-2">ПО ЦЕНЕ 1 ЧАШКИ КОФЕ</div>
+            <h3 class="font-display text-xl font-bold text-white">Всего 290 ₽ в месяц</h3>
+            <p class="text-stone-300 text-sm mt-2 leading-relaxed">
+              Экономия от 30 000 ₽ на бестолковых доставках начинается прямо с первого недельного пака.
+            </p>
+          </div>
+          <a href="#pricing" class="inline-flex items-center gap-2 text-sm font-bold text-amber-300 hover:text-white transition-colors">
+            <span>Выбрать тариф доступа →</span>
+          </a>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= ТАРИФЫ ДОСТУПА ================= -->
+  <section id="pricing" class="py-16 sm:py-24 border-b grid-border bg-paper-grain">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="max-w-3xl mx-auto text-center space-y-4 mb-16">
+        <div class="font-mono text-xs uppercase tracking-widest text-terracotta">[ ВЫБОР ТАРИФА ]</div>
+        <h2 class="font-display font-extrabold text-3xl sm:text-5xl text-charcoal tracking-tight">
+          Инвестиция, которая окупается<br class="hidden sm:inline"> с первого же похода в магазин
+        </h2>
+        <p class="text-muted text-sm sm:text-base">
+          Безопасная оплата через шлюз Robokassa (банковские карты МИР, Visa, Mastercard, СБП). Моментальный автоматический доступ в Telegram сразу после оплаты.
+        </p>
+      </div>
+
+      <!-- Сетка 3 тарифов -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch max-w-6xl mx-auto">
+        
+        <!-- Тариф 1: Месяц -->
+        <div class="p-8 rounded-3xl bg-white border grid-border shadow-sm flex flex-col justify-between space-y-6">
+          <div class="space-y-4">
+            <div class="font-mono text-xs uppercase tracking-wider text-muted font-bold">БАЗОВЫЙ ДОСТУП</div>
+            <h3 class="font-display text-2xl font-bold text-charcoal">1 месяц</h3>
+            <div class="flex items-baseline gap-1">
+              <span class="font-display font-extrabold text-4xl text-charcoal">290 ₽</span>
+              <span class="text-muted text-sm">/ месяц</span>
+            </div>
+            <p class="text-xs text-muted leading-relaxed">
+              Микро-подписка по цене чашки кофе. Автоматическое продление каждые 30 дней, отмена в 1 клик в любой момент.
+            </p>
+            <ul class="space-y-2.5 text-xs text-stone-600 pt-3 border-t grid-border">
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-rosemary"></i> Доступ ко всем недельным пакам</li>
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-rosemary"></i> Списки покупок в супермаркет</li>
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-rosemary"></i> База техник и соусов за 1 минуту</li>
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-rosemary"></i> Комментарии и помощь по заменам</li>
+            </ul>
+          </div>
+
+          <a href="https://t.me/" target="_blank" 
+             class="w-full py-3.5 px-4 rounded-xl border border-charcoal hover:bg-charcoal hover:text-white text-charcoal font-display font-bold text-sm tracking-wide transition-colors text-center block">
+            Оформить на 1 месяц
+          </a>
+        </div>
+
+        <!-- Тариф 2: 3 месяца (ХИТ) -->
+        <div class="p-8 rounded-3xl bg-charcoal text-white shadow-xl flex flex-col justify-between space-y-6 relative overflow-hidden border-2 border-terracotta">
+          <div class="absolute top-4 right-4 bg-terracotta text-white font-mono text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+            ПОПУЛЯРНЫЙ ВЫБОР
+          </div>
+
+          <div class="space-y-4">
+            <div class="font-mono text-xs uppercase tracking-wider text-amber-300 font-bold">СЕЗОН УЖИНОВ</div>
+            <h3 class="font-display text-2xl font-bold text-white">3 месяца</h3>
+            <div class="flex items-baseline gap-2">
+              <span class="font-display font-extrabold text-4xl text-white">790 ₽</span>
+              <span class="text-xs text-stone-400 line-through">870 ₽</span>
+            </div>
+            <p class="text-xs text-stone-300 leading-relaxed">
+              Оптимальный срок, чтобы полностью перестроить пищевую привычку, перестать зависеть от курьеров и сформировать базу любимых быстрых блюд.
+            </p>
+            <ul class="space-y-2.5 text-xs text-stone-200 pt-3 border-t border-white/10">
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-amber-300"></i> Всё, что входит в месячный тариф</li>
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-amber-300"></i> Фиксация цены на 90 дней</li>
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-amber-300"></i> Полный архив прошедших недель</li>
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-amber-300"></i> Гид по инвентарю и заточке ножей</li>
+            </ul>
+          </div>
+
+          <a href="https://t.me/" target="_blank" 
+             class="w-full py-4 px-4 rounded-xl bg-terracotta hover:bg-orange-600 text-white font-display font-bold text-sm tracking-wide transition-colors text-center block shadow-lg">
+            Вступить на 3 месяца
+          </a>
+        </div>
+
+        <!-- Тариф 3: Год -->
+        <div class="p-8 rounded-3xl bg-white border grid-border shadow-sm flex flex-col justify-between space-y-6">
+          <div class="space-y-4">
+            <div class="font-mono text-xs uppercase tracking-wider text-muted font-bold">КЛУБ НА ГОД</div>
+            <h3 class="font-display text-2xl font-bold text-charcoal">12 месяцев</h3>
+            <div class="flex items-baseline gap-2">
+              <span class="font-display font-extrabold text-4xl text-charcoal">2 490 ₽</span>
+              <span class="text-xs text-muted line-through">3 480 ₽</span>
+            </div>
+            <p class="text-xs text-muted leading-relaxed">
+              Всего ~207 ₽ в месяц. Полная свобода от кулинарной рутины на целый год вперед.
+            </p>
+            <ul class="space-y-2.5 text-xs text-stone-600 pt-3 border-t grid-border">
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-rosemary"></i> Доступ на 365 дней без доплат</li>
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-rosemary"></i> Максимальная выгода (скидка 30%)</li>
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-rosemary"></i> Все сезонные меню (лето/осень/зима/весна)</li>
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-rosemary"></i> Приоритетная поддержка автора</li>
+            </ul>
+          </div>
+
+          <a href="https://t.me/" target="_blank" 
+             class="w-full py-3.5 px-4 rounded-xl border border-charcoal hover:bg-charcoal hover:text-white text-charcoal font-display font-bold text-sm tracking-wide transition-colors text-center block">
+            Оформить на 1 год
+          </a>
+        </div>
+
+      </div>
+
+      
+      <!-- ================= БЛОК ДОВЕРИЯ И БЕЗОПАСНОЙ ОПЛАТЫ ROBOKASSA ================= -->
+      <div class="mt-12 max-w-4xl mx-auto bg-white rounded-3xl border grid-border p-6 sm:p-8 shadow-sm space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b grid-border">
+          <div class="space-y-1">
+            <div class="flex items-center gap-2">
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold bg-amber-100 text-amber-900 uppercase tracking-wider">
+                Безопасный платеж
+              </span>
+              <span class="text-xs font-bold text-charcoal">Шлюз Robokassa</span>
+            </div>
+            <p class="text-xs text-muted">
+              Все платежные операции защищены по международному стандарту PCI DSS Level 1 с использованием 256-битного шифрования SSL.
+            </p>
+          </div>
+
+          <!-- Логотипы платежных систем (МИР, СБП, Банковские карты) -->
+          <div class="flex items-center flex-wrap gap-2.5 shrink-0">
+            <!-- МИР -->
+            <div class="h-9 px-3.5 bg-stone-50 rounded-lg border border-stone-200 flex items-center justify-center" title="Платежная система МИР">
+              <svg class="h-4.5 w-auto" viewBox="0 0 100 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="100" height="28" rx="4" fill="#005B9C"/>
+                <path d="M12 7H16.8L21 14.5L25.2 7H30V21H25.8V12.6L22.1 19H19.9L16.2 12.6V21H12V7Z" fill="white"/>
+                <path d="M35 7H39.2V21H35V7Z" fill="white"/>
+                <path d="M44 7H52.5C56.1 7 58.5 9.2 58.5 12.4C58.5 14.8 57.1 16.6 54.8 17.3L59 21H53.8L50.2 17.6H48.2V21H44V7ZM48.2 14.4H52.1C53.6 14.4 54.5 13.6 54.5 12.4C54.5 11.2 53.6 10.4 52.1 10.4H48.2V14.4Z" fill="white"/>
+                <circle cx="72" cy="14" r="7" fill="#00B140"/>
+                <path d="M70 14L71.5 15.5L74.5 12.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <text x="82" y="18" fill="white" font-family="Arial, sans-serif" font-weight="bold" font-size="10">МИР</text>
+              </svg>
+            </div>
+
+            <!-- СБП (Система быстрых платежей) -->
+            <div class="h-9 px-3.5 bg-stone-50 rounded-lg border border-stone-200 flex items-center justify-center" title="Система быстрых платежей (СБП)">
+              <div class="flex items-center gap-1.5">
+                <svg class="h-5 w-auto" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M16 3L28 9V23L16 29L4 23V9L16 3Z" fill="#1A1816"/>
+                  <path d="M11 11L21 16L11 21V11Z" fill="#00B140"/>
+                  <path d="M21 16L16 8.5L11 11L21 16Z" fill="#FBBF24"/>
+                  <path d="M21 16L16 23.5L11 21L21 16Z" fill="#2563EB"/>
+                </svg>
+                <span class="font-display font-extrabold text-[12px] tracking-tight text-charcoal">СБП</span>
+              </div>
+            </div>
+
+            <!-- Банковские карты (Visa / Mastercard) -->
+            <div class="h-9 px-3 bg-stone-50 rounded-lg border border-stone-200 flex items-center gap-1.5 text-[11px] font-mono font-bold text-stone-700">
+              <i data-lucide="credit-card" class="w-4 h-4 text-terracotta"></i>
+              <span>Карты РФ</span>
+            </div>
+
+            <!-- Robokassa Badge -->
+            <div class="h-9 px-3 bg-amber-500 text-white font-display font-extrabold text-xs rounded-lg flex items-center gap-1 shadow-sm">
+              <i data-lucide="shield-check" class="w-4 h-4"></i>
+              <span>ROBOKASSA</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Регламент доставки и порядок оказания услуг для модерации Робокассы -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs leading-relaxed text-stone-600">
+          <div class="space-y-1.5">
+            <div class="font-bold text-charcoal flex items-center gap-1.5">
+              <i data-lucide="zap" class="w-3.5 h-3.5 text-amber-600"></i>
+              <span>Порядок и сроки предоставления услуги:</span>
+            </div>
+            <p>
+              Услуга по предоставлению доступа к материалам закрытого Telegram-канала «Клуб ужинов» оказывается в цифровом виде. Доступ активируется <strong>автоматически и моментально</strong> сразу после подтверждения платежа. Персональная ссылка-приглашение отправляется в Telegram-бот и дублируется на указанный покупателем E-mail.
+            </p>
+          </div>
+
+          <div class="space-y-1.5">
+            <div class="font-bold text-charcoal flex items-center gap-1.5">
+              <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-rosemary"></i>
+              <span>Отмена подписки и возвраты:</span>
+            </div>
+            <p>
+              Ежемесячная подписка может быть отменена в любой момент в 1 клик через Telegram-бот или по ссылке из электронного фискального чека Robokassa. Доступ к материалам сохраняется до конца уже оплаченного периода. Возврат регламентирован ст. 32 Закона РФ «О защите прав потребителей» и Публичной офертой.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-12 text-center text-xs text-muted max-w-lg mx-auto leading-relaxed">
+        Нажимая кнопку оплаты, вы соглашаетесь с условиями 
+        <a href="offer.html" target="_blank" class="underline text-terracotta hover:text-charcoal">Публичной оферты</a> 
+        и даете согласие на обработку персональных данных в соответствии с 
+        <a href="policy.html" target="_blank" class="underline text-terracotta hover:text-charcoal">Политикой конфиденциальности</a>.
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= ЧАСТЫЕ ВОПРОСЫ (FAQ) ================= -->
+  <section id="faq" class="py-16 sm:py-24 border-b grid-border">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8" x-data="{ openFaq: null }">
+      
+      <div class="text-center space-y-3 mb-12">
+        <div class="font-mono text-xs uppercase tracking-widest text-terracotta">[ ВОПРОСЫ И ОТВЕТЫ ]</div>
+        <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-charcoal tracking-tight">
+          Часто задаваемые вопросы
+        </h2>
+      </div>
+
+      <div class="space-y-4">
+        
+        <!-- Вопрос 1 -->
+        <div class="border grid-border rounded-2xl bg-white overflow-hidden">
+          <button @click="openFaq = openFaq === 1 ? null : 1" class="w-full p-6 text-left flex items-center justify-between gap-4 font-display font-bold text-base sm:text-lg text-charcoal">
+            <span>Я совсем не умею готовить. У меня получится?</span>
+            <i data-lucide="chevron-down" class="w-5 h-5 text-muted transition-transform duration-200" :class="{ 'rotate-180': openFaq === 1 }"></i>
+          </button>
+          <div x-show="openFaq === 1" x-cloak class="px-6 pb-6 text-sm text-muted leading-relaxed border-t grid-border pt-4">
+            Да, 100%. Техкарты написаны понятным человеческим языком без заумных поварских терминов. Все ингредиенты указаны в точных граммах и штуках, а пошаговые действия занимают не больше пары абзацев. Если что-то непонятно — вы всегда можете спросить в комментариях под постом дня.
+          </div>
+        </div>
+
+        <!-- Вопрос 2 -->
+        <div class="border grid-border rounded-2xl bg-white overflow-hidden">
+          <button @click="openFaq = openFaq === 2 ? null : 2" class="w-full p-6 text-left flex items-center justify-between gap-4 font-display font-bold text-base sm:text-lg text-charcoal">
+            <span>А если у меня нет духовки или аэрогриля?</span>
+            <i data-lucide="chevron-down" class="w-5 h-5 text-muted transition-transform duration-200" :class="{ 'rotate-180': openFaq === 2 }"></i>
+          </button>
+          <div x-show="openFaq === 2" x-cloak class="px-6 pb-6 text-sm text-muted leading-relaxed border-t grid-border pt-4">
+            Каждый ужин обязательно адаптирован под 3 прибора: обычную сковороду, классическую духовку и аэрогриль. Даже если у вас на съемной квартире есть только одна конфорка и сковорода — вы приготовите любой ужин недели.
+          </div>
+        </div>
+
+        <!-- Вопрос 3 -->
+        <div class="border grid-border rounded-2xl bg-white overflow-hidden">
+          <button @click="openFaq = openFaq === 3 ? null : 3" class="w-full p-6 text-left flex items-center justify-between gap-4 font-display font-bold text-base sm:text-lg text-charcoal">
+            <span>Нужно ли искать экзотические продукты в спецмагазинах?</span>
+            <i data-lucide="chevron-down" class="w-5 h-5 text-muted transition-transform duration-200" :class="{ 'rotate-180': openFaq === 3 }"></i>
+          </button>
+          <div x-show="openFaq === 3" x-cloak class="px-6 pb-6 text-sm text-muted leading-relaxed border-t grid-border pt-4">
+            Никаких трюфельных масел за 3000 рублей, спаржи и семян чиа. 100% списка продуктов закупается в обычном «Магните», «Пятерочке» или «ВкусВилле» у вашего дома. Секрет ресторанного вкуса — в балансе соли, кислоты и технике корочки, а не в ценнике на упаковке.
+          </div>
+        </div>
+
+        
+        <!-- Вопрос 5 (Оплата и Robokassa) -->
+        <div class="border grid-border rounded-2xl bg-white overflow-hidden">
+          <button @click="openFaq = openFaq === 5 ? null : 5" class="w-full p-6 text-left flex items-center justify-between gap-4 font-display font-bold text-base sm:text-lg text-charcoal">
+            <span>Как происходит оплата и безопасны ли мои данные?</span>
+            <i data-lucide="chevron-down" class="w-5 h-5 text-muted transition-transform duration-200" :class="{ 'rotate-180': openFaq === 5 }"></i>
+          </button>
+          <div x-show="openFaq === 5" x-cloak class="px-6 pb-6 text-sm text-muted leading-relaxed border-t grid-border pt-4">
+            Прием платежей организован через официальный платежный сервис Robokassa (карты МИР, Visa, Mastercard, СБП). Данные вашей банковской карты обрабатываются по протоколу шифрования PCI DSS Level 1 и не сохраняются на нашем сервере. Сразу после оплаты формируется официальный электронный фискальный чек (в соответствии с 54-ФЗ), а бот мгновенно присылает вам ссылку на вход в клуб.
+          </div>
+        </div>
+
+        <!-- Вопрос 4 -->
+        <div class="border grid-border rounded-2xl bg-white overflow-hidden">
+          <button @click="openFaq = openFaq === 4 ? null : 4" class="w-full p-6 text-left flex items-center justify-between gap-4 font-display font-bold text-base sm:text-lg text-charcoal">
+            <span>Как отменить подписку, если я решу сделать перерыв?</span>
+            <i data-lucide="chevron-down" class="w-5 h-5 text-muted transition-transform duration-200" :class="{ 'rotate-180': openFaq === 4 }"></i>
+          </button>
+          <div x-show="openFaq === 4" x-cloak class="px-6 pb-6 text-sm text-muted leading-relaxed border-t grid-border pt-4">
+            В любой момент в 1 клик. Никаких скрытых условий или звонков операторам: достаточно нажать кнопку «Управление подпиской» прямо в Telegram-боте либо перейти по ссылке из чека оплаты. Доступ сохранится до конца уже оплаченного месяца.
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= ПОДВАЛ (FOOTER СО ВСЕМИ РЕКВИЗИТАМИ) ================= -->
+  <footer class="bg-espresso text-stone-300 pt-16 pb-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-10 pb-12 border-b border-white/10">
+        
+        <!-- Колонка 1: Проект и позиционирование -->
+        <div class="md:col-span-4 space-y-4">
+          <div class="flex items-center gap-2">
+            <div class="w-7 h-7 rounded bg-terracotta text-white flex items-center justify-center font-display font-bold text-xs">
+              Н
+            </div>
+            <span class="font-display font-bold tracking-tight text-white text-lg">КЛУБ УЖИНОВ НЕСТЕРОВА</span>
+          </div>
+          <p class="text-xs text-stone-400 leading-relaxed max-w-sm">
+            Закрытый цифровой клуб и еженедельный спринт домашних ужинов ресторанного уровня за 15 минут. Без кулинарных дипломов и лишних трат.
+          </p>
+        </div>
+
+        <!-- Колонка 2: Юридические документы -->
+        <div class="md:col-span-4 space-y-3 font-mono text-xs">
+          <div class="text-amber-300 font-bold uppercase tracking-wider">ДОКУМЕНТЫ И ПРАВИЛА</div>
+          <div class="flex flex-col space-y-2.5 pt-1">
+            <a href="offer.html" target="_blank" class="hover:text-white transition-colors flex items-center gap-1.5 group">
+              <span>Публичная оферта</span>
+              <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-stone-500 group-hover:text-white transition-colors"></i>
+            </a>
+            <div class="text-[11px] text-stone-500 leading-snug">
+              Обязательный документ, описывающий на каких условиях вы взаимодействуете с покупателями. Открывается в новой вкладке.
+            </div>
+
+            <a href="policy.html" target="_blank" class="hover:text-white transition-colors flex items-center gap-1.5 group pt-2">
+              <span>Политика конфиденциальности (152-ФЗ)</span>
+              <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-stone-500 group-hover:text-white transition-colors"></i>
+            </a>
+            <div class="text-[11px] text-stone-500 leading-snug">
+              Политика в отношении обработки персональных данных. Открывается в новой вкладке.
+            </div>
+          </div>
+        </div>
+
+        <!-- Колонка 3: Официальные реквизиты автора -->
+        <div class="md:col-span-4 space-y-3 font-mono text-xs">
+          <div class="text-amber-300 font-bold uppercase tracking-wider">РЕКВИЗИТЫ ОПЕРАТОРА</div>
+          <div class="space-y-1.5 text-stone-400 text-xs">
+            <div><span class="text-stone-500">ФИО:</span> <strong class="text-stone-200">Нестеров Никита Александрович</strong></div>
+            <div><span class="text-stone-500">ИНН:</span> <span class="text-stone-200">660408095412</span></div>
+            <div><span class="text-stone-500">Статус:</span> Самозанятый гражданин (НПД)</div>
+            <div><span class="text-stone-500">E-Mail:</span> <a href="mailto:tabula.plan@yandex.com" class="text-stone-200 hover:text-white underline">tabula.plan@yandex.com</a></div>
+            <div><span class="text-stone-500">Сайт:</span> <a href="https://niknesterow201134-code.github.io/nnesterov/" target="_blank" class="text-stone-200 hover:text-white">https://niknesterow201134-code.github.io/nnesterov/</a></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Копирайт в строгом соответствии с требованием -->
+      <div class="pt-8 text-xs text-stone-500 space-y-3">
+        <p class="leading-relaxed">
+          © 2026 Все права защищены. Любое использование или копирование материалов или подборок материалов сайта, элементов дизайна и оформления допускается лишь с письменного разрешения правообладателя и с ссылкой на источник.
+        </p>
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pt-2 text-[11px] text-stone-600">
+          <span>Нестеров Никита Александрович (ИНН 660408095412)</span>
+          <span>Безопасная онлайн-оплата и доступ через Telegram</span>
+        </div>
+      </div>
+
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+    });
+
+    function gastroApp() {
+      return {
+        init() {
+          // Инициализация при загрузке
+        }
+      }
+    }
+  </script>
+</body>
+</html>
