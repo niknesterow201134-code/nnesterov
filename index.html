@@ -116,14 +116,29 @@
       <!-- Правая часть: Большой тумблер темы + Кнопка тарифов -->
       <div class="flex items-center gap-4 sm:gap-6">
         
-        <!-- ТАКТИЛЬНЫЙ ТУМБЛЕР (Light / Dark) БЕЗ ИКОНОК И СМАЙЛИКОВ -->
+        <!-- ТАКТИЛЬНЫЙ ТУМБЛЕР С ИКОНКОЙ ПОЛУМЕСЯЦА / СОЛНЦА -->
         <button type="button" 
                 @click="toggleTheme()" 
-                class="relative flex items-center h-8 w-14 rounded-full p-1 transition-colors duration-300 focus:outline-none select-none border border-black/10 dark:border-white/15 bg-stone-200 dark:bg-stone-800 shrink-0"
-                :title="isDark ? 'Светлая тема' : 'Темная тема'"
+                class="relative flex items-center h-9 w-16 rounded-full p-1 transition-colors duration-300 focus:outline-none select-none border border-black/10 dark:border-white/15 bg-stone-200 dark:bg-stone-800 shrink-0"
+                :title="isDark ? 'Переключить на светлую тему' : 'Переключить на темную тему'"
                 aria-label="Переключение темы">
-          <div class="w-6 h-6 rounded-full bg-white dark:bg-orange-500 shadow-sm transform transition-transform duration-300 ease-out"
-               :class="isDark ? 'translate-x-6' : 'translate-x-0'"></div>
+          <div class="w-7 h-7 rounded-full bg-white dark:bg-[#1A1F1C] shadow-sm transform transition-all duration-300 ease-out flex items-center justify-center text-stone-800 dark:text-stone-200 border border-black/5 dark:border-white/10"
+               :class="isDark ? 'translate-x-7' : 'translate-x-0'">
+            <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" 
+                 class="w-4 h-4 transition-transform duration-500"
+                 :class="isDark ? 'rotate-180' : 'rotate-0'">
+              <line x1="100" y1="10" x2="100" y2="38" stroke="currentColor" stroke-width="12" stroke-linecap="round"/>
+              <line x1="100" y1="162" x2="100" y2="190" stroke="currentColor" stroke-width="12" stroke-linecap="round"/>
+              <line x1="10" y1="100" x2="38" y2="100" stroke="currentColor" stroke-width="12" stroke-linecap="round"/>
+              <line x1="162" y1="100" x2="190" y2="100" stroke="currentColor" stroke-width="12" stroke-linecap="round"/>
+              <line x1="36" y1="36" x2="56" y2="56" stroke="currentColor" stroke-width="12" stroke-linecap="round"/>
+              <line x1="144" y1="144" x2="164" y2="164" stroke="currentColor" stroke-width="12" stroke-linecap="round"/>
+              <line x1="164" y1="36" x2="144" y2="56" stroke="currentColor" stroke-width="12" stroke-linecap="round"/>
+              <line x1="56" y1="144" x2="36" y2="164" stroke="currentColor" stroke-width="12" stroke-linecap="round"/>
+              <circle cx="100" cy="100" r="50" stroke="currentColor" stroke-width="12"/>
+              <path d="M 100 50 A 50 50 0 0 1 100 150 Z" fill="currentColor"/>
+            </svg>
+          </div>
         </button>
 
         <!-- Кнопка CTA -->
@@ -182,11 +197,6 @@
                     class="inline-flex items-center justify-center px-9 py-4 rounded-full bg-orange-600 hover:bg-orange-500 text-white font-display font-bold text-base sm:text-lg tracking-wide shadow-xl shadow-orange-600/30 transition-all hover:scale-[1.02] active:scale-95 text-center">
               Выбрать подписку
             </button>
-            
-            <a href="https://t.me/" target="_blank"
-               class="inline-flex items-center justify-center px-8 py-4 rounded-full bg-white/15 hover:bg-white/25 text-white backdrop-blur-md border border-white/20 font-semibold text-sm sm:text-base tracking-wide transition-all text-center">
-              Войти через Telegram →
-            </a>
           </div>
 
         </div>
@@ -194,151 +204,96 @@
 
     </section>
 
-    <!-- ================= ТЕМЫ И НАПРАВЛЕНИЯ КАНАЛА ================= -->
-    <section class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-16 sm:py-24">
+    <!-- ================= ЧТО ВНУТРИ ================= -->
+    <section class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-16 sm:py-20">
       
-      <div class="mb-12 space-y-2">
-        <span class="text-xs font-bold uppercase tracking-widest text-orange-600 dark:text-orange-400">Что внутри</span>
+      <div class="mb-10">
         <h2 class="font-display font-black text-3xl sm:text-5xl tracking-tight text-stone-900 dark:text-white">
-          Темы и разделы канала
+          Что внутри
         </h2>
       </div>
 
-      <!-- Сетка 9 тем канала -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+      <!-- Компактный список тем без расписок и без 01 02 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
         
-        <!-- 1. Завтраки -->
-        <div class="p-7 rounded-3xl border border-black/[0.07] dark:border-white/[0.08] shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1"
+        <div class="p-4 sm:p-5 rounded-2xl border border-black/[0.06] dark:border-white/[0.08] flex items-center gap-3 transition-colors hover:border-orange-500/40"
              style="background-color: var(--card-bg);">
-          <div class="space-y-3">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-bold uppercase tracking-wider text-orange-600 dark:text-orange-400">01</span>
-            </div>
-            <h3 class="font-display font-black text-stone-900 dark:text-white text-xl">Завтраки</h3>
-            <p class="text-sm text-stone-600 dark:text-stone-400 leading-relaxed">
-              От быстрых утренних идей до неспешных ресторанных бранчей выходного дня.
-            </p>
-          </div>
+          <span class="w-1.5 h-1.5 rounded-full bg-orange-500 shrink-0"></span>
+          <span class="font-display font-bold text-base text-stone-900 dark:text-stone-100">
+            Быстрые завтраки и ресторанные бранчи
+          </span>
         </div>
 
-        <!-- 2. Блюда на несколько дней -->
-        <div class="p-7 rounded-3xl border border-black/[0.07] dark:border-white/[0.08] shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1"
+        <div class="p-4 sm:p-5 rounded-2xl border border-black/[0.06] dark:border-white/[0.08] flex items-center gap-3 transition-colors hover:border-orange-500/40"
              style="background-color: var(--card-bg);">
-          <div class="space-y-3">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-bold uppercase tracking-wider text-orange-600 dark:text-orange-400">02</span>
-            </div>
-            <h3 class="font-display font-black text-stone-900 dark:text-white text-xl">На несколько дней</h3>
-            <p class="text-sm text-stone-600 dark:text-stone-400 leading-relaxed">
-              Умные блюда, которые со временем становятся только вкуснее и спасают от ежедневной готовки.
-            </p>
-          </div>
+          <span class="w-1.5 h-1.5 rounded-full bg-orange-500 shrink-0"></span>
+          <span class="font-display font-bold text-base text-stone-900 dark:text-stone-100">
+            Блюда-заготовки на несколько дней
+          </span>
         </div>
 
-        <!-- 3. Заготовки в морозилку -->
-        <div class="p-7 rounded-3xl border border-black/[0.07] dark:border-white/[0.08] shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1"
+        <div class="p-4 sm:p-5 rounded-2xl border border-black/[0.06] dark:border-white/[0.08] flex items-center gap-3 transition-colors hover:border-orange-500/40"
              style="background-color: var(--card-bg);">
-          <div class="space-y-3">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-bold uppercase tracking-wider text-orange-600 dark:text-orange-400">03</span>
-            </div>
-            <h3 class="font-display font-black text-stone-900 dark:text-white text-xl">Заготовки в морозилку</h3>
-            <p class="text-sm text-stone-600 dark:text-stone-400 leading-relaxed">
-              Правильная заморозка готовой еды и полуфабрикатов без потери текстуры и вкуса.
-            </p>
-          </div>
+          <span class="w-1.5 h-1.5 rounded-full bg-orange-500 shrink-0"></span>
+          <span class="font-display font-bold text-base text-stone-900 dark:text-stone-100">
+            Заготовки и заморозка впрок
+          </span>
         </div>
 
-        <!-- 4. Хранение продуктов -->
-        <div class="p-7 rounded-3xl border border-black/[0.07] dark:border-white/[0.08] shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1"
+        <div class="p-4 sm:p-5 rounded-2xl border border-black/[0.06] dark:border-white/[0.08] flex items-center gap-3 transition-colors hover:border-orange-500/40"
              style="background-color: var(--card-bg);">
-          <div class="space-y-3">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-bold uppercase tracking-wider text-orange-600 dark:text-orange-400">04</span>
-            </div>
-            <h3 class="font-display font-black text-stone-900 dark:text-white text-xl">Хранение продуктов</h3>
-            <p class="text-sm text-stone-600 dark:text-stone-400 leading-relaxed">
-              Как сохранять зелень и овощи свежими неделями, и почему помидоры с огурцами нельзя хранить вместе.
-            </p>
-          </div>
+          <span class="w-1.5 h-1.5 rounded-full bg-orange-500 shrink-0"></span>
+          <span class="font-display font-bold text-base text-stone-900 dark:text-stone-100">
+            Умное хранение продуктов без отходов
+          </span>
         </div>
 
-        <!-- 5. Сервировка -->
-        <div class="p-7 rounded-3xl border border-black/[0.07] dark:border-white/[0.08] shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1"
+        <div class="p-4 sm:p-5 rounded-2xl border border-black/[0.06] dark:border-white/[0.08] flex items-center gap-3 transition-colors hover:border-orange-500/40"
              style="background-color: var(--card-bg);">
-          <div class="space-y-3">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-bold uppercase tracking-wider text-orange-600 dark:text-orange-400">05</span>
-            </div>
-            <h3 class="font-display font-black text-stone-900 dark:text-white text-xl">Сервировка</h3>
-            <p class="text-sm text-stone-600 dark:text-stone-400 leading-relaxed">
-              Простые правила ресторанной подачи дома за 30 секунд: форма тарелки, контраст и соусы-подушки.
-            </p>
-          </div>
+          <span class="w-1.5 h-1.5 rounded-full bg-orange-500 shrink-0"></span>
+          <span class="font-display font-bold text-base text-stone-900 dark:text-stone-100">
+            Сервировка и ресторанная подача
+          </span>
         </div>
 
-        <!-- 6. На компанию и праздники -->
-        <div class="p-7 rounded-3xl border border-black/[0.07] dark:border-white/[0.08] shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1"
+        <div class="p-4 sm:p-5 rounded-2xl border border-black/[0.06] dark:border-white/[0.08] flex items-center gap-3 transition-colors hover:border-orange-500/40"
              style="background-color: var(--card-bg);">
-          <div class="space-y-3">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-bold uppercase tracking-wider text-orange-600 dark:text-orange-400">06</span>
-            </div>
-            <h3 class="font-display font-black text-stone-900 dark:text-white text-xl">На компанию и праздники</h3>
-            <p class="text-sm text-stone-600 dark:text-stone-400 leading-relaxed">
-              Большие эффектные блюда в центр стола, которые вызывают восторг и не утомляют хозяев.
-            </p>
-          </div>
+          <span class="w-1.5 h-1.5 rounded-full bg-orange-500 shrink-0"></span>
+          <span class="font-display font-bold text-base text-stone-900 dark:text-stone-100">
+            Блюда на компанию и праздники
+          </span>
         </div>
 
-        <!-- 7. Блюда на вечер -->
-        <div class="p-7 rounded-3xl border border-black/[0.07] dark:border-white/[0.08] shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1"
+        <div class="p-4 sm:p-5 rounded-2xl border border-black/[0.06] dark:border-white/[0.08] flex items-center gap-3 transition-colors hover:border-orange-500/40"
              style="background-color: var(--card-bg);">
-          <div class="space-y-3">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-bold uppercase tracking-wider text-orange-600 dark:text-orange-400">07</span>
-            </div>
-            <h3 class="font-display font-black text-stone-900 dark:text-white text-xl">Блюда на вечер</h3>
-            <p class="text-sm text-stone-600 dark:text-stone-400 leading-relaxed">
-              Комфорт-фуд и вкусняшки для удовольствия после долгого дня: от самых простых до гастрономических.
-            </p>
-          </div>
+          <span class="w-1.5 h-1.5 rounded-full bg-orange-500 shrink-0"></span>
+          <span class="font-display font-bold text-base text-stone-900 dark:text-stone-100">
+            Уютный комфорт-фуд на вечер
+          </span>
         </div>
 
-        <!-- 8. Соусы -->
-        <div class="p-7 rounded-3xl border border-black/[0.07] dark:border-white/[0.08] shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1"
+        <div class="p-4 sm:p-5 rounded-2xl border border-black/[0.06] dark:border-white/[0.08] flex items-center gap-3 transition-colors hover:border-orange-500/40"
              style="background-color: var(--card-bg);">
-          <div class="space-y-3">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-bold uppercase tracking-wider text-orange-600 dark:text-orange-400">08</span>
-            </div>
-            <h3 class="font-display font-black text-stone-900 dark:text-white text-xl">Соусы</h3>
-            <p class="text-sm text-stone-600 dark:text-stone-400 leading-relaxed">
-              Базовые заправки и быстрые эмульсии из того, что есть в холодильнике, меняющие любое блюдо.
-            </p>
-          </div>
+          <span class="w-1.5 h-1.5 rounded-full bg-orange-500 shrink-0"></span>
+          <span class="font-display font-bold text-base text-stone-900 dark:text-stone-100">
+            Базовые ресторанные соусы и эмульсии
+          </span>
         </div>
 
-        <!-- 9. Необычные сочетания продуктов -->
-        <div class="p-7 rounded-3xl border border-black/[0.07] dark:border-white/[0.08] shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1"
+        <div class="p-4 sm:p-5 rounded-2xl border border-black/[0.06] dark:border-white/[0.08] flex items-center gap-3 transition-colors hover:border-orange-500/40"
              style="background-color: var(--card-bg);">
-          <div class="space-y-3">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-bold uppercase tracking-wider text-orange-600 dark:text-orange-400">09</span>
-            </div>
-            <h3 class="font-display font-black text-stone-900 dark:text-white text-xl">Необычные сочетания</h3>
-            <p class="text-sm text-stone-600 dark:text-stone-400 leading-relaxed">
-              Фудпейринг и новые вкусовые пары: от кофе со свеклой до неожиданных сочетаний приправ и текстур.
-            </p>
-          </div>
+          <span class="w-1.5 h-1.5 rounded-full bg-orange-500 shrink-0"></span>
+          <span class="font-display font-bold text-base text-stone-900 dark:text-stone-100">
+            Необычные вкусовые сочетания и фудпейринг
+          </span>
         </div>
 
       </div>
 
       <!-- Призыв внизу секции -->
-      <div class="mt-16 text-center">
+      <div class="mt-12 text-center">
         <button @click="showTariffs = true"
-                class="px-9 py-4 rounded-full bg-orange-600 hover:bg-orange-500 text-white font-display font-bold text-base sm:text-lg tracking-wide shadow-lg shadow-orange-600/25 transition-all hover:scale-[1.02] active:scale-95">
+                class="px-9 py-3.5 rounded-full bg-orange-600 hover:bg-orange-500 text-white font-display font-bold text-base tracking-wide shadow-lg shadow-orange-600/25 transition-all hover:scale-[1.02] active:scale-95">
           Выбрать подписку
         </button>
       </div>
