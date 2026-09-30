@@ -171,7 +171,14 @@ document.addEventListener('DOMContentLoaded', () => {
         return `${count}&nbsp;ингредиентов`;
     }
 
-    // --- Authentication & Security State ---
+    // --- Authentication & Security State (Supabase Cloud + Local Backup) ---
+    const SUPABASE_URL = 'https://wmcrshretrerwvcjxper.supabase.co';
+    const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndtY3JzaHJldHJlcnd2Y2p4cGVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA3ODg3NDgsImV4cCI6MjEwNjM2NDc0OH0.AdtBc5gYOqXljfdzVLjj7yYbExPYeXnIVfrcHan_4vM';
+    let supabaseClient = null;
+    if (window.supabase && typeof window.supabase.createClient === 'function') {
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+    }
+
     const AUTH_SESSION_KEY = 'recipe_user_session_v1';
     let currentSession = null;
     try {
@@ -1644,15 +1651,36 @@ document.addEventListener('DOMContentLoaded', () => {
                 let userToken = null;
                 let activeUsername = username;
 
-                // 1. Check local credentials first with fresh data
-                const users = getLocalUsers();
-                const userRecord = users[username];
-                if (userRecord && (userRecord.password === password || userRecord.altPassword === password)) {
-                    authSuccess = true;
-                    userToken = 'tok_' + Math.random().toString(36).substring(2) + Date.now();
+                // 1. Try Supabase Cloud Auth first (Cloud synchronization across all devices)
+                if (supabaseClient) {
+                    try {
+                        const emailToTry = username.includes('@') ? username : `${username}@nnesterov.ru`;
+                        const { data: supaData, error: supaErr } = await supabaseClient.auth.signInWithPassword({
+                            email: emailToTry,
+                            password: password
+                        });
+
+                        if (!supaErr && supaData && supaData.session) {
+                            authSuccess = true;
+                            userToken = supaData.session.access_token;
+                            activeUsername = username;
+                        }
+                    } catch (e) {
+                        // Supabase network error or fallback
+                    }
                 }
 
-                // 2. If not matched locally, query server API
+                // 2. Fallback to local baseline credentials (offline & bootstrap support)
+                if (!authSuccess) {
+                    const users = getLocalUsers();
+                    const userRecord = users[username];
+                    if (userRecord && (userRecord.password === password || userRecord.altPassword === password)) {
+                        authSuccess = true;
+                        userToken = 'tok_' + Math.random().toString(36).substring(2) + Date.now();
+                    }
+                }
+
+                // 3. Fallback to backend API endpoint if exists
                 if (!authSuccess) {
                     try {
                         const response = await fetch('/api/login', {
@@ -1694,6 +1722,41 @@ document.addEventListener('DOMContentLoaded', () => {
                 loginErrorMsg.classList.remove('hidden');
             } finally {
                 if (submitBtn) submitBtn.disabled = false;
+            }
+        });
+    }
+
+    // Telegram Auth Handler
+    const telegramAuthBtn = document.getElementById('telegramAuthBtn');
+    if (telegramAuthBtn) {
+        telegramAuthBtn.addEventListener('click', () => {
+            // If opened inside Telegram WebApp
+            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
+                const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
+                const tgUsername = tgUser.username || `tg_${tgUser.id}`;
+                currentSession = {
+                    token: 'tg_tok_' + tgUser.id + '_' + Date.now(),
+                    username: tgUsername
+                };
+                localStorage.setItem(AUTH_SESSION_KEY, JSON.stringify(currentSession));
+                checkAuthStatus();
+                loadRecipesData();
+                showToast(`Добро пожаловать, ${tgUser.first_name || tgUsername}`);
+                return;
+            }
+
+            // If opened in external browser, prompt for personal Telegram ID or username
+            const tgLogin = prompt('Введите ваш Telegram @username или ID из закрытого канала для быстрой авторизации:');
+            if (tgLogin && tgLogin.trim()) {
+                const cleanTg = tgLogin.trim().replace(/^@/, '').toLowerCase();
+                currentSession = {
+                    token: 'tg_web_' + cleanTg + '_' + Date.now(),
+                    username: cleanTg
+                };
+                localStorage.setItem(AUTH_SESSION_KEY, JSON.stringify(currentSession));
+                checkAuthStatus();
+                loadRecipesData();
+                showToast(`Вход выполнен: @${cleanTg}`);
             }
         });
     }
@@ -1835,7 +1898,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     changedLocally = true;
                 }
 
-                // 2. Also sync with backend server if live endpoint exists
+                // 2. Also sync with Supabase Cloud so the new password works on all devices instantly
+                if (supabaseClient) {
+                    try {
+                        const { error: supaUpErr } = await supabaseClient.auth.updateUser({
+                            password: newPass
+                        });
+                        if (!supaUpErr) {
+                            changedLocally = true;
+                        }
+                    } catch (e) {
+                        // fallback to local/api
+                    }
+                }
+
+                // 3. Also sync with backend server if live endpoint exists
                 try {
                     await fetch('/api/change-password', {
                         method: 'POST',

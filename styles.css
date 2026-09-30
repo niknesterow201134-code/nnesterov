@@ -2335,6 +2335,62 @@ header {
   box-shadow: 3px 3px 0px var(--text-primary);
 }
 
+.auth-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 14px 0 10px;
+  position: relative;
+  text-align: center;
+}
+
+.auth-divider::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: var(--separator);
+  z-index: 1;
+}
+
+.auth-divider span {
+  position: relative;
+  z-index: 2;
+  background: var(--card-bg);
+  padding: 0 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+.auth-telegram-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 13px 20px;
+  background: #24A1DE;
+  color: #FFFFFF;
+  border: var(--brutal-border-width) solid #24A1DE;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: var(--brutal-shadow-sm);
+  transition: transform 0.15s, box-shadow 0.15s, background-color 0.15s;
+}
+
+.auth-telegram-btn:hover {
+  background: #208EC4;
+  border-color: #208EC4;
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0px rgba(36, 161, 222, 0.4);
+}
+
 .auth-gate-footer {
   border-top: 1px solid var(--separator);
   padding-top: 14px;
