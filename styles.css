@@ -1,0 +1,2456 @@
+:root {
+  /* Dark Theme (Default) - Neobrutalism */
+  --bg-color: #0c0c0e;
+  --text-primary: #ffffff;
+  --text-secondary: #c5c5cb;
+  --text-muted: #8e8e96;
+  --card-bg: #141417;
+  --card-border: #ffffff;
+  --card-hover-border: #ffffff;
+  --card-hover-bg: #1a1a1f;
+  --separator: #2c2c34;
+  --accent-color: #ffffff;
+  --accent-contrast: #000000;
+  --brutal-shadow: 4px 4px 0px #ffffff;
+  --brutal-shadow-sm: 2px 2px 0px #ffffff;
+  --brutal-border-width: 2px;
+}
+
+[data-theme="light"] {
+  /* Light Theme - Swiss Neobrutalism */
+  --bg-color: #f4f4f0;
+  --text-primary: #000000;
+  --text-secondary: #222222;
+  --text-muted: #666666;
+  --card-bg: #ffffff;
+  --card-border: #000000;
+  --card-hover-border: #000000;
+  --card-hover-bg: #fafafa;
+  --separator: #000000;
+  --accent-color: #000000;
+  --accent-contrast: #ffffff;
+  --brutal-shadow: 4px 4px 0px #000000;
+  --brutal-shadow-sm: 2px 2px 0px #000000;
+  --brutal-border-width: 2px;
+}
+
+
+
+
+
+
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-radius: 0 !important;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.25s, color 0.25s;
+  overflow-x: hidden;
+  line-height: 1.5;
+}
+
+/* Wide Container */
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 clamp(20px, 3.5vw, 60px);
+  padding-bottom: 100px;
+}
+
+/* Header */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--bg-color);
+  border-bottom: 1px solid var(--separator);
+  padding: 24px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.25s;
+}
+
+.header-logo {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  line-height: 0;
+}
+
+.header-logo-img {
+  height: clamp(34px, 4vw, 44px);
+  width: auto;
+  display: block;
+  transition: opacity 0.2s;
+}
+
+[data-theme="dark"] .header-logo-img {
+  filter: invert(1);
+}
+
+.header-logo:hover .header-logo-img {
+  opacity: 0.8;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.theme-toggle {
+  background: transparent;
+  border: 1px solid var(--card-border);
+  color: var(--text-primary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.theme-toggle:hover {
+  border-color: var(--text-primary);
+  background-color: var(--card-hover-bg);
+}
+
+.header-fav-btn {
+  background: transparent;
+  border: var(--brutal-border-width) solid var(--text-primary);
+  box-shadow: var(--brutal-shadow-sm);
+  color: var(--text-primary);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  transition: all 0.15s ease;
+}
+
+.header-fav-btn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0px var(--text-primary);
+  background-color: var(--card-hover-bg);
+}
+
+.header-fav-btn:active, .header-fav-btn.active {
+  transform: translate(2px, 2px);
+  box-shadow: 0px 0px 0px var(--text-primary);
+  background: var(--text-primary);
+  color: var(--bg-color);
+}
+
+.header-fav-icon-img {
+  width: 20px;
+  height: 24px;
+  display: block;
+  transition: filter 0.2s;
+}
+
+/* Custom Drawn Header Icons */
+.header-action-icon {
+  display: block;
+  object-fit: contain;
+  filter: invert(1);
+  transition: filter 0.2s, transform 0.15s;
+}
+
+[data-theme="light"] .header-action-icon {
+  filter: none;
+}
+
+.header-cart-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.header-theme-icon {
+  width: 22px;
+  height: 22px;
+}
+
+.header-profile-icon {
+  width: 22px;
+  height: 22px;
+}
+
+[data-theme="dark"] .header-fav-icon-img {
+  filter: invert(1);
+}
+
+/* In light theme, active button background is black (#000000), so icon must invert to white */
+[data-theme="light"] .header-fav-btn.active .header-fav-icon-img {
+  filter: invert(1);
+}
+
+/* In dark theme, active button background is white (#ffffff), so icon must invert(0) / stay black */
+[data-theme="dark"] .header-fav-btn.active .header-fav-icon-img {
+  filter: invert(0);
+}
+
+.header-fav-count {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  background: var(--text-primary);
+  color: var(--bg-color);
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-size: 10px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--bg-color);
+}
+
+.header-fav-btn.active .header-fav-count {
+  background: var(--bg-color);
+  color: var(--text-primary);
+  border-color: var(--text-primary);
+}
+
+/* Navigation Tabs & Arrow Controls */
+.nav-bar {
+  margin-top: 28px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--separator);
+  padding-bottom: 16px;
+}
+
+.nav-scroll-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  width: 100%;
+}
+
+.nav-arrow-btn {
+  background: var(--card-bg);
+  border: var(--brutal-border-width) solid var(--text-primary);
+  box-shadow: var(--brutal-shadow-sm);
+  color: var(--text-primary);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  flex-shrink: 0;
+  padding: 0;
+  transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.15s ease;
+}
+
+.nav-arrow-btn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0px var(--text-primary);
+  background-color: var(--card-hover-bg);
+}
+
+.nav-arrow-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0px 0px 0px var(--text-primary);
+}
+
+.nav-arrow-icon {
+  width: 28px;
+  height: 28px;
+  display: block;
+  pointer-events: none;
+}
+
+[data-theme="dark"] .nav-arrow-icon {
+  filter: invert(1);
+}
+
+.tabs {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  align-items: center;
+  scroll-behavior: smooth;
+  flex: 1;
+}
+
+.tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.tab-btn {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 500;
+  font-size: 15px;
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--card-border);
+  height: 44px;
+  padding: 0 22px;
+  cursor: pointer;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.tab-btn:hover {
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+  background: var(--card-hover-bg);
+}
+
+.tab-btn.active {
+  background: var(--accent-color);
+  color: var(--accent-contrast);
+  border-color: var(--accent-color);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 700;
+}
+
+/* Toolbar (Search + Categories) */
+.toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 36px;
+}
+
+.search-box {
+  width: 100%;
+}
+
+.search-input {
+  width: 100%;
+  height: 50px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  padding: 0 20px;
+  color: var(--text-primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 400;
+  font-size: 15px;
+  transition: border-color 0.2s;
+  outline: none;
+}
+
+.search-input:focus {
+  border-color: var(--text-primary);
+}
+
+.search-input::placeholder {
+  color: var(--text-muted);
+}
+
+.categories {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.category-btn {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 500;
+  font-size: 13.5px;
+  background: var(--card-bg);
+  color: var(--text-secondary);
+  border: 1px solid var(--card-border);
+  height: 36px;
+  padding: 0 16px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.category-btn:hover {
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+}
+
+.category-btn.active {
+  background: var(--text-primary);
+  color: var(--bg-color);
+  border-color: var(--text-primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 700;
+}
+
+/* Wide 3-Column Recipe Grid */
+.recipe-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+@media (max-width: 1100px) {
+  .recipe-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 680px) {
+  .recipe-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+/* Clean Sharp Rectangular Card (No description) */
+.recipe-card {
+  position: relative;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  padding: clamp(24px, 2.2vw, 32px);
+  cursor: pointer;
+  transition: border-color 0.25s, transform 0.25s, background-color 0.25s;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 200px;
+}
+
+.recipe-card:hover {
+  border-color: var(--card-hover-border);
+  background-color: var(--card-hover-bg);
+  transform: translateY(-3px);
+}
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.card-tag {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.card-fav-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s;
+  z-index: 2;
+}
+
+.card-fav-btn:hover {
+  transform: scale(1.18);
+}
+
+.card-fav-icon {
+  width: 19px;
+  height: 23px;
+  display: block;
+  pointer-events: none;
+  transition: transform 0.2s, opacity 0.2s;
+  opacity: 0.75;
+}
+
+[data-theme="dark"] .card-fav-icon {
+  filter: invert(1);
+}
+
+.card-fav-btn:hover .card-fav-icon {
+  opacity: 1;
+}
+
+.card-fav-btn.active .card-fav-icon {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+.card-title {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 700;
+  font-size: clamp(20px, 1.4vw, 24px);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.25;
+  color: var(--text-primary);
+  margin-bottom: 24px;
+}
+
+/* Card Image */
+.card-image-wrap {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border: 1px solid var(--card-border);
+  margin-bottom: 20px;
+  background: var(--bg-color);
+}
+
+.card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.35s ease;
+}
+
+.recipe-card:hover .card-image {
+  transform: scale(1.03);
+}
+
+.card-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 18px;
+  border-top: 1px solid var(--separator);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 700;
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.card-bottom-val {
+  color: var(--text-secondary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 500;
+}
+
+/* Empty States */
+.empty-state {
+  text-align: center;
+  padding: 80px 20px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 400;
+  font-size: clamp(16px, 1.1vw, 20px);
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Modal Overlay & Sharp Content */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  overflow-y: auto;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+  padding: 40px 20px;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-content {
+  background: var(--bg-color);
+  border: 1px solid var(--card-border);
+  width: 100%;
+  max-width: 820px;
+  padding: clamp(32px, 3.5vw, 56px);
+  position: relative;
+  transform: translateY(16px);
+  transition: transform 0.25s ease;
+  margin: auto 0;
+}
+
+.modal-overlay.active .modal-content {
+  transform: translateY(0);
+}
+
+.modal-close {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  color: var(--text-primary);
+  width: 44px;
+  height: 44px;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+  background: var(--card-hover-bg);
+  border-color: var(--text-primary);
+}
+
+.modal-tag {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.modal-title {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 700;
+  font-size: clamp(28px, 2.8vw, 42px);
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  margin-bottom: 16px;
+  padding-right: 50px;
+  color: var(--text-primary);
+}
+
+.modal-meta-row {
+  display: flex;
+  gap: 20px;
+  padding-bottom: 24px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--separator);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 700;
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.modal-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Modal Image */
+.modal-image-wrap {
+  width: 100%;
+  max-height: 440px;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border: 1px solid var(--card-border);
+  margin-bottom: 24px;
+  background: var(--card-bg);
+}
+
+.modal-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.modal-desc {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 400;
+  font-size: clamp(15.5px, 1.05vw, 17.5px);
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.modal-note-box {
+  margin-bottom: 32px;
+  padding: 16px 20px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-left: 3px solid var(--text-primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 400;
+  font-size: 14.5px;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+.modal-note-label {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-right: 6px;
+}
+
+.modal-section-title {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 700;
+  font-size: clamp(20px, 1.6vw, 24px);
+  letter-spacing: -0.02em;
+  margin-bottom: 20px;
+  margin-top: 36px;
+  color: var(--text-primary);
+}
+
+.ingredients-list {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px 24px;
+}
+
+.ingredient-item {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--separator);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 400;
+  font-size: 15px;
+  color: var(--text-secondary);
+}
+
+.ingredient-amount {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.steps-list {
+  list-style: none;
+  counter-reset: step-counter;
+}
+
+.step-item {
+  position: relative;
+  padding-left: 48px;
+  margin-bottom: 24px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 400;
+  font-size: 15.5px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.step-item::before {
+  counter-increment: step-counter;
+  content: counter(step-counter);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 30px;
+  height: 30px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.chef-secret-box {
+  margin-top: 40px;
+  padding: 24px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+}
+
+.chef-secret-header {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+}
+
+.chef-secret-body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 400;
+  font-size: 15px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.sauce-fits-box {
+  margin-top: 24px;
+  padding: 20px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 400;
+  font-size: 14.5px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.sauce-fits-label {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-right: 6px;
+}
+
+.usage-guide-box {
+  margin-top: 24px;
+  padding: 24px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.usage-guide-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.usage-guide-label {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 700;
+  font-size: 12.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+}
+
+.usage-guide-text {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 400;
+  font-size: 15px;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+/* Structured Recipe Sections */
+.recipe-structured-block {
+  margin-top: 32px;
+  border-top: 1px solid var(--separator);
+  padding-top: 24px;
+}
+
+.recipe-section-wrap {
+  margin-top: 28px;
+}
+
+.recipe-section-card {
+  padding: 20px 24px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 400;
+  font-size: 15px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.recipe-section-card.critical-card {
+  border-left: 3px solid var(--text-primary);
+  background: var(--card-hover-bg);
+}
+
+.recipe-critical-title {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 700;
+  font-size: 13.5px;
+  letter-spacing: 0.04em;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.recipe-critical-sub {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Shopping List & Cart UI */
+.shopping-list-btn {
+  background: transparent;
+  border: 1px solid var(--card-border);
+  color: var(--text-primary);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 16px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.shopping-list-btn:hover {
+  border-color: var(--text-primary);
+  background-color: var(--card-hover-bg);
+}
+
+.shopping-list-btn.has-items {
+  border-color: var(--text-primary);
+}
+
+.shopping-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  background: var(--text-primary);
+  color: var(--bg-color);
+}
+
+.card-meta-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.card-cart-btn {
+  background: transparent;
+  border: 1px solid var(--card-border);
+  color: var(--text-secondary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.card-cart-btn:hover {
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+  background-color: var(--card-hover-bg);
+}
+
+.card-cart-btn.active {
+  background: var(--text-primary);
+  color: var(--bg-color);
+  border-color: var(--text-primary);
+}
+
+.modal-action-row {
+  margin-bottom: 24px;
+}
+
+.modal-cart-btn {
+  width: 100%;
+  height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: transparent;
+  border: 1px solid var(--card-border);
+  color: var(--text-primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 700;
+  font-size: 13.5px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.modal-cart-btn:hover {
+  border-color: var(--text-primary);
+  background-color: var(--card-hover-bg);
+}
+
+.modal-cart-btn.active {
+  background: var(--text-primary);
+  color: var(--bg-color);
+  border-color: var(--text-primary);
+}
+
+.modal-btn-icon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  display: block;
+  filter: invert(1);
+}
+
+[data-theme="light"] .modal-btn-icon {
+  filter: none;
+}
+
+/* Invert when inside active or filled buttons */
+.start-cooking-btn .modal-btn-icon {
+  filter: invert(0);
+}
+
+[data-theme="light"] .start-cooking-btn .modal-btn-icon {
+  filter: invert(1);
+}
+
+.modal-cart-btn.active .modal-btn-icon {
+  filter: invert(0);
+}
+
+[data-theme="light"] .modal-cart-btn.active .modal-btn-icon {
+  filter: invert(1);
+}
+
+/* Floating Bottom Bar */
+.floating-cart-bar {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 95;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  background: var(--text-primary);
+  color: var(--bg-color);
+  border: 1px solid var(--text-primary);
+  padding: 12px 20px;
+  width: min(calc(100% - 32px), 580px);
+  animation: floatIn 0.25s ease forwards;
+}
+
+@keyframes floatIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 20px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.floating-cart-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.floating-cart-count {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.floating-cart-sub {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  opacity: 0.8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.floating-cart-action {
+  background: var(--bg-color);
+  color: var(--text-primary);
+  border: 1px solid var(--bg-color);
+  padding: 8px 16px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.floating-cart-action:hover {
+  opacity: 0.9;
+}
+
+/* Shopping Modal Content */
+.shopping-modal-content {
+  max-width: 760px;
+}
+
+.shopping-modal-header {
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--separator);
+}
+
+.shopping-modal-title {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 700;
+  font-size: clamp(26px, 2.4vw, 34px);
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  margin-bottom: 16px;
+  color: var(--text-primary);
+}
+
+.shopping-modal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.shopping-action-btn {
+  height: 42px;
+  padding: 0 18px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 700;
+  font-size: 12.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.copy-btn {
+  background: var(--text-primary);
+  color: var(--bg-color);
+  border: 1px solid var(--text-primary);
+}
+
+.copy-btn:hover {
+  opacity: 0.9;
+}
+
+.clear-btn {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--card-border);
+}
+
+.clear-btn:hover {
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+}
+
+.shopping-clear-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.shopping-clear-confirm {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--card-bg);
+  border: 1px solid var(--text-primary);
+  padding: 4px 12px;
+  height: 42px;
+}
+
+.shopping-clear-text {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.shopping-confirm-yes-btn {
+  background: #ff334b;
+  color: #ffffff;
+  border: 1px solid #ff334b;
+  padding: 6px 10px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.shopping-confirm-yes-btn:hover {
+  opacity: 0.9;
+}
+
+.shopping-confirm-no-btn {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--card-border);
+  padding: 6px 10px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.shopping-confirm-no-btn:hover {
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+}
+
+/* Selected Dishes Bar */
+.shopping-dishes-bar {
+  margin-bottom: 24px;
+  padding: 16px 20px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+}
+
+.shopping-dishes-header {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 700;
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.shopping-dishes-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.shopping-dish-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: var(--card-hover-bg);
+  border: 1px solid var(--card-border);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 500;
+  font-size: 13.5px;
+  color: var(--text-primary);
+}
+
+.shopping-dish-remove {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0 2px;
+  font-size: 13px;
+  line-height: 1;
+  transition: color 0.15s;
+}
+
+.shopping-dish-remove:hover {
+  color: #ff334b;
+}
+
+/* Unified Shopping Checklist */
+.shopping-unified-list-wrap {
+  margin-bottom: 24px;
+  border: 1px solid var(--card-border);
+  background: var(--card-bg);
+}
+
+.shopping-unified-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 16px 20px;
+  background: var(--card-hover-bg);
+  border-bottom: 1px solid var(--separator);
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.shopping-unified-title {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+}
+
+.shopping-unified-hint {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 400;
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+.shopping-unified-items {
+  display: flex;
+  flex-direction: column;
+}
+
+.shopping-check-item {
+  display: flex;
+  align-items: center;
+  padding: 13px 20px;
+  border-bottom: 1px solid var(--separator);
+  cursor: pointer;
+  transition: background-color 0.15s;
+  user-select: none;
+  gap: 14px;
+}
+
+.shopping-check-item:last-child {
+  border-bottom: none;
+}
+
+.shopping-check-item:hover {
+  background-color: var(--card-hover-bg);
+}
+
+.shopping-check-box {
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.15s;
+  pointer-events: none;
+}
+
+.shopping-check-name,
+.shopping-check-amount {
+  pointer-events: none;
+}
+
+.shopping-check-item.checked .shopping-check-box {
+  background: var(--text-primary);
+  border-color: var(--text-primary);
+}
+
+.shopping-check-item.checked .shopping-check-box::after {
+  content: '✓';
+  color: var(--bg-color);
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.shopping-check-name {
+  flex: 1;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 500;
+  font-size: 15px;
+  color: var(--text-primary);
+  transition: opacity 0.15s, text-decoration 0.15s;
+}
+
+.shopping-check-item.checked .shopping-check-name {
+  text-decoration: line-through;
+  opacity: 0.45;
+}
+
+.shopping-check-amount {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.shopping-check-item.checked .shopping-check-amount {
+  text-decoration: line-through;
+  opacity: 0.45;
+}
+
+.shopping-pantry-note {
+  padding: 14px 18px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-left: 3px solid var(--text-muted);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 400;
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.shopping-pantry-label {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-right: 6px;
+}
+
+/* Empty State */
+.shopping-empty {
+  padding: 48px 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.shopping-empty-icon {
+  margin-bottom: 16px;
+  color: var(--text-muted);
+}
+
+.shopping-empty-title {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.shopping-empty-desc {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 400;
+  font-size: 15px;
+  color: var(--text-secondary);
+  line-height: 1.55;
+  max-width: 480px;
+}
+
+/* Toast */
+.toast-container {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.toast {
+  background: var(--text-primary);
+  color: var(--bg-color);
+  border: 1px solid var(--text-primary);
+  padding: 14px 20px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 700;
+  font-size: 13.5px;
+  letter-spacing: 0.02em;
+  pointer-events: auto;
+  animation: toastIn 0.25s ease forwards;
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 600px) {
+  .shopping-list-btn span:not(.shopping-badge) {
+    display: none;
+  }
+  .shopping-list-btn {
+    padding: 0 12px;
+  }
+  .floating-cart-bar {
+    bottom: 12px;
+    width: calc(100% - 24px);
+    padding: 10px 14px;
+  }
+  .floating-cart-count {
+    font-size: 13px;
+  }
+  .floating-cart-action {
+    padding: 6px 12px;
+    font-size: 11px;
+  }
+}
+
+/* Feature 1: Shopping View Toggle & Category Groups */
+.shopping-view-toggle {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  border-top: 1px solid var(--separator);
+  padding-top: 16px;
+}
+
+.shopping-view-btn {
+  background: transparent;
+  border: 1px solid var(--card-border);
+  color: var(--text-secondary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.shopping-view-btn:hover {
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+}
+
+.shopping-view-btn.active {
+  background: var(--text-primary);
+  color: var(--bg-color);
+  border-color: var(--text-primary);
+}
+
+.shopping-category-group {
+  margin-bottom: 20px;
+  border: 1px solid var(--card-border);
+  background: var(--card-bg);
+}
+
+.shopping-category-group:last-child {
+  margin-bottom: 0;
+}
+
+.shopping-category-title {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 12px 18px;
+  background: var(--card-hover-bg);
+  border-bottom: 1px solid var(--separator);
+  color: var(--text-primary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.shopping-category-count {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  color: var(--text-muted);
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+/* Feature 4: Interactive Servings Calculator */
+.servings-calculator {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+}
+
+.servings-calc-label {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 500;
+  font-size: 13.5px;
+  color: var(--text-secondary);
+}
+
+.servings-calc-buttons {
+  display: flex;
+  gap: 6px;
+}
+
+.servings-btn {
+  background: transparent;
+  border: 1px solid var(--card-border);
+  color: var(--text-primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.servings-btn:hover {
+  border-color: var(--text-primary);
+}
+
+.servings-btn.active {
+  background: var(--text-primary);
+  color: var(--bg-color);
+  border-color: var(--text-primary);
+}
+
+/* Feature 2: Start Cooking Button */
+.modal-actions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 580px) {
+  .modal-actions-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.start-cooking-btn {
+  width: 100%;
+  height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: var(--text-primary);
+  border: 1px solid var(--text-primary);
+  color: var(--bg-color);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 700;
+  font-size: 13.5px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.start-cooking-btn:hover {
+  opacity: 0.9;
+}
+
+/* Feature 3: Clickable Step Timer Chips */
+.step-timer-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 8px;
+  margin: 0 4px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  color: var(--text-primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  vertical-align: baseline;
+  transition: all 0.15s;
+}
+
+.step-timer-chip * {
+  pointer-events: none;
+}
+
+.step-timer-chip svg {
+  flex-shrink: 0;
+}
+
+.step-timer-chip:hover {
+  background: var(--text-primary);
+  color: var(--bg-color);
+  border-color: var(--text-primary);
+}
+
+.step-timer-chip.running {
+  background: var(--text-primary);
+  color: var(--bg-color);
+  border-color: var(--text-primary);
+  animation: pulseTimer 1.6s infinite ease-in-out;
+}
+
+@keyframes pulseTimer {
+  0% { opacity: 1; }
+  50% { opacity: 0.75; }
+  100% { opacity: 1; }
+}
+
+/* Feature 2: Hands-Free Chef Mode */
+.chef-mode-overlay {
+  z-index: 1000;
+  background: var(--bg-color);
+  padding: 0;
+  display: none;
+  align-items: stretch;
+  justify-content: stretch;
+}
+
+.chef-mode-overlay.active {
+  display: flex;
+}
+
+.chef-mode-container {
+  width: 100%;
+  height: 100%;
+  max-width: 860px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-color);
+  padding: 24px;
+}
+
+.chef-mode-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  gap: 16px;
+}
+
+.chef-mode-progress-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.chef-mode-step-badge {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  background: var(--card-hover-bg);
+  border: 1px solid var(--card-border);
+  padding: 6px 12px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.chef-mode-recipe-title {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 500;
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 480px;
+}
+
+.chef-mode-close {
+  background: transparent;
+  border: 1px solid var(--card-border);
+  color: var(--text-secondary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.chef-mode-close:hover {
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+}
+
+.chef-mode-progress-bar {
+  width: 100%;
+  height: 4px;
+  background: var(--card-border);
+  margin-bottom: 32px;
+}
+
+.chef-mode-progress-fill {
+  height: 100%;
+  background: var(--text-primary);
+  width: 0%;
+  transition: width 0.25s ease;
+}
+
+.chef-mode-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 20px 0;
+  max-width: 720px;
+}
+
+.chef-mode-step-text {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 700;
+  font-size: clamp(22px, 3.2vw, 36px);
+  letter-spacing: -0.02em;
+  line-height: 1.35;
+  color: var(--text-primary);
+  margin-bottom: 28px;
+}
+
+.chef-mode-step-timer-wrap {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.chef-mode-step-timer-wrap .step-timer-chip {
+  padding: 10px 18px;
+  font-size: 15px;
+}
+
+.chef-mode-footer {
+  display: grid;
+  grid-template-columns: 1fr 1.6fr;
+  gap: 16px;
+  padding-top: 24px;
+  border-top: 1px solid var(--separator);
+}
+
+.chef-nav-btn {
+  height: 56px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.chef-nav-btn.prev-btn {
+  background: transparent;
+  border: 1px solid var(--card-border);
+  color: var(--text-secondary);
+}
+
+.chef-nav-btn.prev-btn:hover:not(:disabled) {
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+}
+
+.chef-nav-btn.prev-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.chef-nav-btn.next-btn {
+  background: var(--text-primary);
+  border: 1px solid var(--text-primary);
+  color: var(--bg-color);
+}
+
+.chef-nav-btn.next-btn:hover {
+  opacity: 0.9;
+}
+
+@media (max-width: 600px) {
+  .chef-mode-container {
+    padding: 16px;
+  }
+  .chef-mode-footer {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .chef-nav-btn {
+    height: 50px;
+    font-size: 12.5px;
+    padding: 0 10px;
+  }
+}
+
+/* Feature 3: Global Active Cooking Timer Widget */
+.active-timer-widget {
+  position: fixed;
+  bottom: 84px;
+  right: 24px;
+  z-index: 1200;
+  background: var(--text-primary);
+  color: var(--bg-color);
+  border: 1px solid var(--text-primary);
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  animation: timerWidgetIn 0.2s ease forwards;
+}
+
+@keyframes timerWidgetIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.timer-widget-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.timer-widget-label {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+
+.timer-widget-time {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: 0.05em;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.timer-widget-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.timer-widget-btn {
+  background: var(--bg-color);
+  color: var(--text-primary);
+  border: none;
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  transition: opacity 0.15s;
+}
+
+.timer-widget-btn:hover {
+  opacity: 0.85;
+}
+
+@media (max-width: 600px) {
+  .active-timer-widget {
+    bottom: 74px;
+    right: 12px;
+    left: 12px;
+    justify-content: space-between;
+  }
+}
+
+
+
+/* Neobrutalism Core Enhancements */
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Neue Haas Grotesk Text Pro', sans-serif;
+  letter-spacing: -0.015em;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Crisp Neobrutalist borders and hard shadows */
+header {
+  border-bottom: var(--brutal-border-width) solid var(--text-primary);
+}
+
+.tab-btn {
+  border: var(--brutal-border-width) solid var(--text-primary);
+  font-weight: 700;
+  box-shadow: var(--brutal-shadow-sm);
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.tab-btn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0px var(--text-primary);
+}
+
+.tab-btn:active, .tab-btn.active {
+  transform: translate(2px, 2px);
+  box-shadow: 0px 0px 0px var(--text-primary);
+}
+
+.theme-toggle, .shopping-list-btn {
+  border: var(--brutal-border-width) solid var(--text-primary);
+  box-shadow: var(--brutal-shadow-sm);
+}
+
+.theme-toggle:hover, .shopping-list-btn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0px var(--text-primary);
+}
+
+.theme-toggle:active, .shopping-list-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0px 0px 0px var(--text-primary);
+}
+
+.search-input {
+  border: var(--brutal-border-width) solid var(--text-primary);
+  box-shadow: var(--brutal-shadow-sm);
+}
+
+.search-input:focus {
+  box-shadow: var(--brutal-shadow);
+}
+
+.category-btn {
+  border: 1.5px solid var(--text-primary);
+  font-weight: 600;
+}
+
+.category-btn:hover {
+  background: var(--text-primary);
+  color: var(--bg-color);
+}
+
+.category-btn.active {
+  box-shadow: var(--brutal-shadow-sm);
+}
+
+.recipe-card {
+  border: var(--brutal-border-width) solid var(--card-border);
+  box-shadow: var(--brutal-shadow);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.recipe-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px var(--card-border);
+}
+
+.card-image-wrap {
+  border: var(--brutal-border-width) solid var(--card-border);
+}
+
+.card-cart-btn {
+  border: var(--brutal-border-width) solid var(--text-primary);
+  font-weight: 700;
+}
+
+.card-cart-btn:hover {
+  background: var(--text-primary);
+  color: var(--bg-color);
+}
+
+.modal-content, .shopping-modal-content {
+  border: var(--brutal-border-width) solid var(--text-primary);
+  box-shadow: 8px 8px 0px var(--text-primary);
+}
+
+.modal-close {
+  border: var(--brutal-border-width) solid var(--text-primary);
+  box-shadow: var(--brutal-shadow-sm);
+}
+
+.modal-close:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0px var(--text-primary);
+}
+
+.modal-cart-btn, .start-cooking-btn, .copy-btn, .shopping-view-btn {
+  border: var(--brutal-border-width) solid var(--text-primary);
+  box-shadow: var(--brutal-shadow-sm);
+  font-weight: 700;
+}
+
+.modal-cart-btn:hover, .start-cooking-btn:hover, .copy-btn:hover, .shopping-view-btn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0px var(--text-primary);
+}
+
+.active-timer-widget, .floating-cart-bar {
+  border: var(--brutal-border-width) solid var(--text-primary);
+  box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.4);
+}
+
+.step-timer-chip {
+  border: 1.5px solid var(--text-primary);
+  font-weight: 600;
+}
+
+.shopping-category-group, .shopping-unified-list-wrap, .shopping-dishes-bar {
+  border: var(--brutal-border-width) solid var(--text-primary);
+}
+
+.shopping-check-box {
+  border: 2px solid var(--text-primary);
+}
+
+.chef-secret-box, .modal-note-box, .sauce-fits-box, .usage-guide-box {
+  border: var(--brutal-border-width) solid var(--card-border);
+  box-shadow: var(--brutal-shadow-sm);
+}
+
+/* Header Profile Button */
+.header-profile-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: transparent;
+  border: var(--brutal-border-width) solid var(--text-primary);
+  color: var(--text-primary);
+  cursor: pointer;
+  box-shadow: var(--brutal-shadow-sm);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.header-profile-btn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0px var(--text-primary);
+}
+
+/* Auth Gate Fullscreen Overlay */
+.auth-gate-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-color);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.auth-gate-overlay.hidden {
+  display: none !important;
+}
+
+.auth-gate-card {
+  width: 100%;
+  max-width: 460px;
+  background: var(--card-bg);
+  border: var(--brutal-border-width) solid var(--text-primary);
+  box-shadow: 8px 8px 0px var(--text-primary);
+  padding: clamp(24px, 5vw, 40px);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.auth-gate-header {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.auth-gate-logo {
+  height: 38px;
+  width: auto;
+  align-self: flex-start;
+}
+
+[data-theme="dark"] .auth-gate-logo {
+  filter: invert(1);
+}
+
+.auth-gate-title {
+  font-size: clamp(22px, 3vw, 26px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  color: var(--text-primary);
+}
+
+.auth-gate-subtitle {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+.auth-gate-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.auth-label {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+}
+
+.auth-input {
+  width: 100%;
+  padding: 12px 14px;
+  background: var(--bg-color);
+  border: var(--brutal-border-width) solid var(--text-primary);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 15px;
+  outline: none;
+  transition: box-shadow 0.15s;
+}
+
+.auth-input:focus {
+  box-shadow: var(--brutal-shadow-sm);
+}
+
+.auth-input::placeholder {
+  color: var(--text-muted);
+}
+
+.password-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.password-input-wrap .auth-input {
+  padding-right: 48px;
+}
+
+.password-toggle-btn {
+  position: absolute;
+  right: 2px;
+  top: 2px;
+  bottom: 2px;
+  width: 44px;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: color 0.15s, background-color 0.15s;
+}
+
+.password-toggle-btn:hover {
+  color: var(--text-primary);
+  background: rgba(128, 128, 128, 0.1);
+}
+
+.password-toggle-btn svg {
+  display: block;
+}
+
+.auth-error-msg {
+  padding: 10px 12px;
+  border: var(--brutal-border-width) solid #ff4d4f;
+  background: rgba(255, 77, 79, 0.1);
+  color: #ff4d4f;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.auth-success-msg {
+  padding: 10px 12px;
+  border: var(--brutal-border-width) solid #52c41a;
+  background: rgba(82, 196, 26, 0.1);
+  color: #52c41a;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.auth-submit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px 20px;
+  background: var(--text-primary);
+  color: var(--accent-contrast);
+  border: var(--brutal-border-width) solid var(--text-primary);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: var(--brutal-shadow-sm);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.auth-submit-btn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0px var(--text-primary);
+}
+
+.auth-gate-footer {
+  border-top: 1px solid var(--separator);
+  padding-top: 14px;
+}
+
+.auth-gate-note {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.auth-demo-hint {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.auth-demo-label {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.auth-demo-fill-btn {
+  background: transparent;
+  border: 1px dashed var(--text-primary);
+  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 8px;
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.auth-demo-fill-btn:hover {
+  background: var(--text-primary);
+  color: var(--accent-contrast);
+}
+
+/* Profile Modal Specifics */
+.profile-modal-content {
+  max-width: 520px;
+}
+
+.profile-modal-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.profile-modal-title {
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+.profile-user-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.profile-user-label {
+  color: var(--text-muted);
+}
+
+.profile-user-id {
+  font-weight: 700;
+  padding: 2px 6px;
+  border: 1px solid var(--text-primary);
+  background: var(--card-bg);
+}
+
+.profile-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.profile-password-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.profile-form-title {
+  font-size: 16px;
+  font-weight: 700;
+  border-bottom: 1px solid var(--separator);
+  padding-bottom: 8px;
+}
+
+.profile-logout-wrap {
+  border-top: 1px solid var(--separator);
+  padding-top: 16px;
+}
+
+.profile-logout-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: transparent;
+  border: var(--brutal-border-width) solid var(--text-primary);
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.profile-logout-btn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: var(--brutal-shadow-sm);
+}
+

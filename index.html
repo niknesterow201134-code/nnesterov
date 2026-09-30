@@ -1,644 +1,292 @@
 <!DOCTYPE html>
-<html lang="ru" class="scroll-smooth">
+<html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NESTEROV — Домашняя гастрономия и закрытый канал</title>
-  <meta name="description" content="Рецепты ресторанного вкуса, техники, заготовки, соусы и культура домашней кухни по подписке.">
-
-  <!-- Предотвращение мигания темы (FOUC) -->
-  <script>
-    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  </script>
-
-  <!-- Шрифты: Bricolage Grotesque + Manrope -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['"Manrope"', 'sans-serif'],
-            display: ['"Bricolage Grotesque"', '"Manrope"', 'sans-serif'],
-          },
-          colors: {
-            brand: {
-              red: '#E03D1A',
-              redhover: '#C73212',
-              dark: '#111312',
-              darkcard: '#181B19',
-              sand: '#FAF8F4',
-              muted: '#717672',
-            }
-          }
-        }
-      }
-    };
-  </script>
-
-  <!-- Lucide Icons -->
-
-  <!-- Alpine.js -->
-  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-
-  <style>
-    [x-cloak] { display: none !important; }
-
-    :root {
-      --bg-page: #FAF8F4;
-      --text-main: #141615;
-      --text-muted: #6E726F;
-      --card-bg: #FFFFFF;
-      --card-border: rgba(0, 0, 0, 0.08);
-      --header-bg: rgba(250, 248, 244, 0.88);
-      --header-border: rgba(0, 0, 0, 0.08);
-    }
-
-    html.dark {
-      --bg-page: #0C0E0D;
-      --text-main: #FAF9F6;
-      --text-muted: #9DA19E;
-      --card-bg: #141715;
-      --card-border: rgba(255, 255, 255, 0.08);
-      --header-bg: rgba(12, 14, 13, 0.88);
-      --header-border: rgba(255, 255, 255, 0.1);
-    }
-
-    body {
-      background-color: var(--bg-page);
-      color: var(--text-main);
-      transition: background-color 0.3s ease, color 0.3s ease;
-    }
-
-    .bg-grain {
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.035'/%3E%3C/svg%3E");
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"></noscript>
+    <link rel="stylesheet" href="styles.css?v=13">
+    <script src="https://telegram.org/js/telegram-web-app.js" defer></script>
 </head>
-<body class="antialiased min-h-screen flex flex-col selection:bg-orange-600 selection:text-white relative"
-      x-data="{ 
-        showTariffs: false,
-        isDark: document.documentElement.classList.contains('dark'),
-        toggleTheme() {
-          this.isDark = !this.isDark;
-          if (this.isDark) {
-            document.documentElement.classList.add('dark');
-            localStorage.setItem('theme', 'dark');
-          } else {
-            document.documentElement.classList.remove('dark');
-            localStorage.setItem('theme', 'light');
-          }
-        }
-      }">
+<body>
+    <div class="container">
+        <header>
+            <div class="header-left">
+                <a href="#" class="header-logo" aria-label="NNESTEROV">
+                    <img src="logo.svg" alt="NNESTEROV" class="header-logo-img">
+                </a>
+            </div>
+            <div class="header-right">
+                <button class="header-fav-btn" id="headerFavBtn" data-tab="favorites" aria-label="Избранное">
+                    <img src="heart_filled.svg" alt="Избранное" class="header-fav-icon-img">
+                    <span class="header-fav-count hidden" id="headerFavBadge">0</span>
+                </button>
+                <button class="shopping-list-btn" id="openShoppingBtn" aria-label="Список покупок">
+                    <img src="icon_cart.png" alt="" class="header-action-icon header-cart-icon">
+                    <span>Список покупок</span>
+                    <span class="shopping-badge hidden" id="shoppingBadge">0</span>
+                </button>
+                <button class="theme-toggle" id="themeToggle" aria-label="Сменить тему">
+                    <img src="icon_moon.png" id="moonIcon" alt="Ночная тема" class="header-action-icon header-theme-icon hidden">
+                    <img src="icon_sun.png" id="sunIcon" alt="Дневная тема" class="header-action-icon header-theme-icon">
+                </button>
+                <button class="header-profile-btn" id="headerProfileBtn" aria-label="Профиль доступа">
+                    <img src="icon_profile.png" alt="Профиль" class="header-action-icon header-profile-icon">
+                </button>
+            </div>
+        </header>
 
-  <!-- ================= ПОЛНОШИРИННАЯ ШАПКА ================= -->
-  <header class="sticky top-0 z-40 w-full border-b border-black/[0.06] dark:border-white/[0.08] backdrop-blur-xl transition-colors duration-300"
-          style="background-color: var(--header-bg);">
-    <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-4 flex items-center justify-between">
-      
-      <!-- Логотип nesterov (единый белый цвет, без разноцветности и без gastro) -->
-      <a href="#" class="flex items-center group shrink-0">
-        <span class="font-display font-black text-2xl sm:text-3xl tracking-tight text-stone-900 dark:text-white transition-colors">
-          nesterov
-        </span>
-      </a>
+        <div class="nav-bar">
+            <div class="nav-scroll-wrap">
+                <button class="nav-arrow-btn nav-arrow-left" id="navArrowLeft" aria-label="Прокрутить назад">
+                    <img src="arrow_left.svg" alt="" class="nav-arrow-icon">
+                </button>
+                <nav class="tabs" id="mainTabs">
+                    <button class="tab-btn active" data-tab="breakfasts">Завтраки</button>
+                    <button class="tab-btn" data-tab="roti">Рецепты с&nbsp;роти</button>
+                    <button class="tab-btn" data-tab="tea">Чай</button>
+                    <button class="tab-btn" data-tab="sweet_breakfasts">Сладкие завтраки</button>
+                    <button class="tab-btn" data-tab="soups">Супы</button>
+                    <button class="tab-btn" data-tab="mains">Вторые блюда</button>
+                    <button class="tab-btn" data-tab="cozy">Осенние блюда</button>
+                    <button class="tab-btn" data-tab="freezer">Для&nbsp;заморозки</button>
+                    <button class="tab-btn" data-tab="prep_preserves">Заготовки</button>
+                    <button class="tab-btn" data-tab="party">На&nbsp;компанию</button>
+                    <button class="tab-btn" data-tab="sauces">Соусы</button>
+                    <button class="tab-btn" data-tab="dressings">Заправки к&nbsp;салатам</button>
+                    <button class="tab-btn" data-tab="snacks">Перекусы</button>
+                </nav>
+                <button class="nav-arrow-btn nav-arrow-right" id="navArrowRight" aria-label="Прокрутить вперед">
+                    <img src="arrow_right.svg" alt="" class="nav-arrow-icon">
+                </button>
+            </div>
+        </div>
 
-      <!-- Правая часть: Большой тумблер темы + Кнопка тарифов -->
-      <div class="flex items-center gap-4 sm:gap-6">
-        
-        <!-- ТАКТИЛЬНЫЙ ТУМБЛЕР С ИКОНКОЙ ПОЛУМЕСЯЦА / СОЛНЦА -->
-        <button type="button" 
-                @click="toggleTheme()" 
-                class="relative flex items-center h-9 w-16 rounded-full p-1 transition-colors duration-300 focus:outline-none select-none border border-black/10 dark:border-white/15 bg-stone-200 dark:bg-stone-800 shrink-0"
-                :title="isDark ? 'Переключить на светлую тему' : 'Переключить на темную тему'"
-                aria-label="Переключение темы">
-          <div class="w-7 h-7 rounded-full bg-white dark:bg-[#1A1F1C] shadow-sm transform transition-all duration-300 ease-out flex items-center justify-center text-stone-800 dark:text-stone-200 border border-black/5 dark:border-white/10"
-               :class="isDark ? 'translate-x-7' : 'translate-x-0'">
-            <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" 
-                 class="w-4 h-4 transition-transform duration-500"
-                 :class="isDark ? 'rotate-180' : 'rotate-0'">
-              <line x1="100" y1="10" x2="100" y2="38" stroke="currentColor" stroke-width="12" stroke-linecap="round"/>
-              <line x1="100" y1="162" x2="100" y2="190" stroke="currentColor" stroke-width="12" stroke-linecap="round"/>
-              <line x1="10" y1="100" x2="38" y2="100" stroke="currentColor" stroke-width="12" stroke-linecap="round"/>
-              <line x1="162" y1="100" x2="190" y2="100" stroke="currentColor" stroke-width="12" stroke-linecap="round"/>
-              <line x1="36" y1="36" x2="56" y2="56" stroke="currentColor" stroke-width="12" stroke-linecap="round"/>
-              <line x1="144" y1="144" x2="164" y2="164" stroke="currentColor" stroke-width="12" stroke-linecap="round"/>
-              <line x1="164" y1="36" x2="144" y2="56" stroke="currentColor" stroke-width="12" stroke-linecap="round"/>
-              <line x1="56" y1="144" x2="36" y2="164" stroke="currentColor" stroke-width="12" stroke-linecap="round"/>
-              <circle cx="100" cy="100" r="50" stroke="currentColor" stroke-width="12"/>
-              <path d="M 100 50 A 50 50 0 0 1 100 150 Z" fill="currentColor"/>
-            </svg>
-          </div>
-        </button>
+        <div class="toolbar" id="toolbar">
+            <div class="search-box">
+                <input type="text" class="search-input" id="searchInput" placeholder="Поиск по&nbsp;названию блюда или ингредиенту">
+            </div>
+        </div>
 
-        <!-- Кнопка CTA -->
-        <button @click="showTariffs = true"
-                class="px-5 sm:px-7 py-2.5 rounded-full text-xs sm:text-sm font-bold text-white bg-orange-600 hover:bg-orange-500 shadow-sm shadow-orange-600/20 active:scale-95 transition-all">
-          Выбрать подписку
-        </button>
-
-      </div>
-
+        <main>
+            <div class="recipe-grid" id="recipesGrid">
+                <!-- Recipe cards dynamically injected -->
+            </div>
+            <div class="empty-state hidden" id="emptyState">
+                Ничего не&nbsp;найдено по&nbsp;вашему запросу
+            </div>
+            <div class="empty-state hidden" id="favoritesEmptyState">
+                В&nbsp;избранном пока пусто&nbsp;— нажимайте сердечко на&nbsp;любом блюде, чтобы сохранить его здесь
+            </div>
+        </main>
     </div>
-  </header>
 
-  <!-- ================= ГЛАВНЫЙ ЭКРАН (HERO БЕЗ РАМОК, ПОЛНОШИРИННЫЙ ФОН) ================= -->
-  <main class="flex-1">
-    
-    <!-- Секция HERO: картинка на весь фон без рамок, контент на широкой сетке max-w-7xl -->
-    <section class="relative w-full min-h-[580px] sm:min-h-[680px] flex items-center py-16 sm:py-24 overflow-hidden">
-      
-      <!-- ФОНОВОЕ ФОТО НА ВСЮ ШИРИНУ БЕЗ РАМКИ -->
-      <div class="absolute inset-0 z-0">
-        <img src="hero-food.jpg" 
-             alt="Сочные запеченные овощи" 
-             class="w-full h-full object-cover object-center">
-        
-        <!-- Многослойный градиент для кристальной читаемости текста и сохранения текстуры еды -->
-        <div class="absolute inset-0 bg-gradient-to-r from-black/90 via-black/75 to-black/35 sm:to-black/20"></div>
-        <div class="absolute inset-0 bg-gradient-to-t from-[#0C0E0D] via-transparent to-black/30 dark:opacity-100 opacity-60"></div>
-        <div class="absolute inset-0 bg-grain opacity-40 pointer-events-none"></div>
-      </div>
+    <!-- Floating Quick Bar for Shopping List -->
+    <div class="floating-cart-bar hidden" id="floatingCartBar">
+        <div class="floating-cart-info">
+            <span class="floating-cart-count" id="floatingCartCount">В&nbsp;списке 0 блюд</span>
+            <span class="floating-cart-sub" id="floatingCartSub">Чек-лист для&nbsp;похода в&nbsp;магазин</span>
+        </div>
+        <button class="floating-cart-action" id="floatingOpenShoppingBtn">
+            <span>Открыть список</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+    </div>
 
-      <!-- КОНТЕНТ HERO: широкая сетка max-w-7xl -->
-      <div class="relative z-10 max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 w-full">
-        <div class="max-w-3xl space-y-7">
-          
-          <!-- Бейдж -->
-          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/15 backdrop-blur-md border border-white/20 text-xs font-semibold text-white tracking-wide uppercase">
-            <span>Закрытый кулинарный канал</span>
-          </div>
+    <!-- Recipe Detail Modal -->
+    <div class="modal-overlay" id="recipeModal">
+        <div class="modal-content">
+            <button class="modal-close" id="modalClose" aria-label="Закрыть">&times;</button>
+            <div id="modalBody">
+                <!-- Injected via app.js -->
+            </div>
+        </div>
+    </div>
 
-          <!-- МОЩНЫЙ ЗАГОЛОВОК (отражает всю глубину кухни) -->
-          <h1 class="font-display font-black text-5xl sm:text-7xl lg:text-8xl tracking-tight leading-[0.98] text-white uppercase">
-            Домашняя<br>
-            <span class="text-orange-400 sm:text-orange-500">гастрономия</span>
-          </h1>
+    <!-- Shopping List Modal -->
+    <div class="modal-overlay" id="shoppingModal">
+        <div class="modal-content shopping-modal-content">
+            <button class="modal-close" id="shoppingModalClose" aria-label="Закрыть">&times;</button>
+            <div class="shopping-modal-header">
+                <div class="modal-tag">Чек-лист для&nbsp;супермаркета</div>
+                <h2 class="shopping-modal-title">Список покупок</h2>
+                <div class="shopping-modal-actions" id="shoppingModalActions">
+                    <button class="shopping-action-btn copy-btn" id="copyShoppingListBtn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"><rect x="9" y="9" width="13" height="13" rx="0" ry="0"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                        <span>Скопировать список в&nbsp;буфер</span>
+                    </button>
+                    <div class="shopping-clear-wrap" id="shoppingClearWrap">
+                        <button class="shopping-action-btn clear-btn" id="clearShoppingListBtn">
+                            Очистить список
+                        </button>
+                        <div class="shopping-clear-confirm hidden" id="shoppingClearConfirm">
+                            <span class="shopping-clear-text">Точно очистить?</span>
+                            <button class="shopping-confirm-yes-btn" id="clearShoppingYesBtn">Да</button>
+                            <button class="shopping-confirm-no-btn" id="clearShoppingNoBtn">Отмена</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="shopping-view-toggle" id="shoppingViewToggle">
+                    <button class="shopping-view-btn active" data-mode="categories" id="viewCategoriesBtn">По&nbsp;отделам</button>
+                    <button class="shopping-view-btn" data-mode="unified" id="viewUnifiedBtn">Единым списком</button>
+                </div>
+            </div>
+            <div class="shopping-modal-body" id="shoppingModalBody">
+                <!-- Injected via app.js -->
+            </div>
+        </div>
+    </div>
 
-          <!-- ЧИСТОЕ И ЧЕСТНОЕ ОПИСАНИЕ ВСЕГО ОБЪЕМА КАНАЛА -->
-          <p class="text-lg sm:text-2xl text-stone-200 font-medium leading-relaxed max-w-2xl">
-            Рецепты ресторанного вкуса, соусы, умные заготовки, хранение продуктов и&nbsp;необычные сочетания вкусов в&nbsp;одном закрытом сообществе
-          </p>
+    <!-- Hands-Free Chef Mode Modal -->
+    <div class="modal-overlay chef-mode-overlay" id="chefModeModal">
+        <div class="chef-mode-container">
+            <div class="chef-mode-header">
+                <div class="chef-mode-progress-info">
+                    <span class="chef-mode-step-badge" id="chefModeStepBadge">Шаг 1 из&nbsp;5</span>
+                    <span class="chef-mode-recipe-title" id="chefModeRecipeTitle"></span>
+                </div>
+                <button class="chef-mode-close" id="chefModeClose" aria-label="Завершить готовку">Завершить</button>
+            </div>
+            <div class="chef-mode-progress-bar">
+                <div class="chef-mode-progress-fill" id="chefModeProgressFill"></div>
+            </div>
+            <div class="chef-mode-body" id="chefModeBody">
+                <div class="chef-mode-step-text" id="chefModeStepText"></div>
+                <div class="chef-mode-step-timer-wrap" id="chefModeStepTimerWrap"></div>
+            </div>
+            <div class="chef-mode-footer">
+                <button class="chef-nav-btn prev-btn" id="chefModePrevBtn" disabled>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    <span>Назад</span>
+                </button>
+                <button class="chef-nav-btn next-btn" id="chefModeNextBtn">
+                    <span>Следующий шаг</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+            </div>
+        </div>
+    </div>
 
-          <!-- Кнопки действий -->
-          <div class="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-            <button @click="showTariffs = true"
-                    class="inline-flex items-center justify-center px-9 py-4 rounded-full bg-orange-600 hover:bg-orange-500 text-white font-display font-bold text-base sm:text-lg tracking-wide shadow-xl shadow-orange-600/30 transition-all hover:scale-[1.02] active:scale-95 text-center">
-              Выбрать подписку
+    <!-- Global Floating Active Cooking Timer Widget -->
+    <div class="active-timer-widget hidden" id="activeTimerWidget">
+        <div class="timer-widget-info">
+            <span class="timer-widget-label">Таймер блюда</span>
+            <span class="timer-widget-time" id="timerWidgetTime">00:00</span>
+        </div>
+        <div class="timer-widget-controls">
+            <button class="timer-widget-btn" id="timerWidgetToggleBtn" aria-label="Пауза или старт">
+                <svg id="timerPauseIcon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+                <svg id="timerPlayIcon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" class="hidden"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
             </button>
-          </div>
-
+            <button class="timer-widget-btn" id="timerWidgetStopBtn" aria-label="Сбросить">✕</button>
         </div>
-      </div>
-
-    </section>
-
-    <!-- ================= ЧТО ВНУТРИ ================= -->
-    <section class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-16 sm:py-20">
-      
-      <div class="mb-10 space-y-2">
-        <h2 class="font-display font-black text-3xl sm:text-5xl tracking-tight text-stone-900 dark:text-white">
-          Что внутри
-        </h2>
-        <p class="text-sm text-stone-600 dark:text-stone-400 font-medium">
-          Темы и&nbsp;разделы, которые выходят в&nbsp;канале
-        </p>
-      </div>
-
-      <!-- Компактная сетка 10 тем -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-        <div class="p-4 sm:p-5 rounded-2xl border border-black/[0.06] dark:border-white/[0.08] flex items-center gap-3.5 transition-colors hover:border-orange-500/40"
-             style="background-color: var(--card-bg);">
-          <span class="w-2 h-2 rounded-full bg-orange-500 shrink-0"></span>
-          <span class="font-display font-bold text-base text-stone-900 dark:text-stone-100">
-            Завтраки
-          </span>
-        </div>
-        <div class="p-4 sm:p-5 rounded-2xl border border-black/[0.06] dark:border-white/[0.08] flex items-center gap-3.5 transition-colors hover:border-orange-500/40"
-             style="background-color: var(--card-bg);">
-          <span class="w-2 h-2 rounded-full bg-orange-500 shrink-0"></span>
-          <span class="font-display font-bold text-base text-stone-900 dark:text-stone-100">
-            Блюда на несколько дней
-          </span>
-        </div>
-        <div class="p-4 sm:p-5 rounded-2xl border border-black/[0.06] dark:border-white/[0.08] flex items-center gap-3.5 transition-colors hover:border-orange-500/40"
-             style="background-color: var(--card-bg);">
-          <span class="w-2 h-2 rounded-full bg-orange-500 shrink-0"></span>
-          <span class="font-display font-bold text-base text-stone-900 dark:text-stone-100">
-            Блюда на вечер
-          </span>
-        </div>
-        <div class="p-4 sm:p-5 rounded-2xl border border-black/[0.06] dark:border-white/[0.08] flex items-center gap-3.5 transition-colors hover:border-orange-500/40"
-             style="background-color: var(--card-bg);">
-          <span class="w-2 h-2 rounded-full bg-orange-500 shrink-0"></span>
-          <span class="font-display font-bold text-base text-stone-900 dark:text-stone-100">
-            Заготовки в морозилку
-          </span>
-        </div>
-        <div class="p-4 sm:p-5 rounded-2xl border border-black/[0.06] dark:border-white/[0.08] flex items-center gap-3.5 transition-colors hover:border-orange-500/40"
-             style="background-color: var(--card-bg);">
-          <span class="w-2 h-2 rounded-full bg-orange-500 shrink-0"></span>
-          <span class="font-display font-bold text-base text-stone-900 dark:text-stone-100">
-            Хранение продуктов
-          </span>
-        </div>
-        <div class="p-4 sm:p-5 rounded-2xl border border-black/[0.06] dark:border-white/[0.08] flex items-center gap-3.5 transition-colors hover:border-orange-500/40"
-             style="background-color: var(--card-bg);">
-          <span class="w-2 h-2 rounded-full bg-orange-500 shrink-0"></span>
-          <span class="font-display font-bold text-base text-stone-900 dark:text-stone-100">
-            Блюда на компанию
-          </span>
-        </div>
-        <div class="p-4 sm:p-5 rounded-2xl border border-black/[0.06] dark:border-white/[0.08] flex items-center gap-3.5 transition-colors hover:border-orange-500/40"
-             style="background-color: var(--card-bg);">
-          <span class="w-2 h-2 rounded-full bg-orange-500 shrink-0"></span>
-          <span class="font-display font-bold text-base text-stone-900 dark:text-stone-100">
-            Соусы
-          </span>
-        </div>
-        <div class="p-4 sm:p-5 rounded-2xl border border-black/[0.06] dark:border-white/[0.08] flex items-center gap-3.5 transition-colors hover:border-orange-500/40"
-             style="background-color: var(--card-bg);">
-          <span class="w-2 h-2 rounded-full bg-orange-500 shrink-0"></span>
-          <span class="font-display font-bold text-base text-stone-900 dark:text-stone-100">
-            Сервировка
-          </span>
-        </div>
-        <div class="p-4 sm:p-5 rounded-2xl border border-black/[0.06] dark:border-white/[0.08] flex items-center gap-3.5 transition-colors hover:border-orange-500/40"
-             style="background-color: var(--card-bg);">
-          <span class="w-2 h-2 rounded-full bg-orange-500 shrink-0"></span>
-          <span class="font-display font-bold text-base text-stone-900 dark:text-stone-100">
-            Сочетания продуктов
-          </span>
-        </div>
-        <div class="p-4 sm:p-5 rounded-2xl border border-black/[0.06] dark:border-white/[0.08] flex items-center gap-3.5 transition-colors hover:border-orange-500/40"
-             style="background-color: var(--card-bg);">
-          <span class="w-2 h-2 rounded-full bg-orange-500 shrink-0"></span>
-          <span class="font-display font-bold text-base text-stone-900 dark:text-stone-100">
-            Техники приготовления
-          </span>
-        </div>
-      </div>
-
-      <!-- Призыв внизу секции -->
-      <div class="mt-12 text-center">
-        <button @click="showTariffs = true"
-                class="px-9 py-3.5 rounded-full bg-orange-600 hover:bg-orange-500 text-white font-display font-bold text-base tracking-wide shadow-lg shadow-orange-600/25 transition-all hover:scale-[1.02] active:scale-95">
-          Выбрать подписку
-        </button>
-      </div>
-
-    </section>
-
-    <!-- ================= ГАЛЕРЕЯ БЛЮД ================= -->
-    <section class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-16 sm:py-20 border-t border-black/[0.06] dark:border-white/[0.08]">
-      
-      <div class="mb-10 space-y-2">
-        <h2 class="font-display font-black text-3xl sm:text-5xl tracking-tight text-stone-900 dark:text-white">
-          Примеры блюд
-        </h2>
-        <p class="text-sm text-stone-600 dark:text-stone-400 font-medium">
-          Ужины и&nbsp;бульоны, которые вы&nbsp;легко приготовите дома за&nbsp;15&nbsp;минут
-        </p>
-      </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        
-        <div class="group rounded-3xl overflow-hidden border border-black/[0.06] dark:border-white/[0.08] transition-all hover:border-orange-500/40"
-             style="background-color: var(--card-bg);">
-          <div class="aspect-square overflow-hidden bg-stone-100 dark:bg-stone-800">
-            <img src="images/asian-broth.webp" 
-                 alt="Азиатский куриный бульон с грибами и кунжутным маслом" 
-                 loading="lazy"
-                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-          </div>
-          <div class="p-5 space-y-1.5">
-            <h3 class="font-display font-bold text-base text-stone-900 dark:text-stone-100 leading-snug">
-              Азиатский куриный бульон с&nbsp;грибами и&nbsp;кунжутным маслом
-            </h3>
-            <p class="text-xs text-stone-500 dark:text-stone-400">
-              Глубокий чистый навар, шиитаке и&nbsp;янтарное масло
-            </p>
-          </div>
-        </div>
-
-        <div class="group rounded-3xl overflow-hidden border border-black/[0.06] dark:border-white/[0.08] transition-all hover:border-orange-500/40"
-             style="background-color: var(--card-bg);">
-          <div class="aspect-square overflow-hidden bg-stone-100 dark:bg-stone-800">
-            <img src="images/pumpkin-soup.webp" 
-                 alt="Бархатистый тыквенный суп с кокосовым молоком и имбирем" 
-                 loading="lazy"
-                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-          </div>
-          <div class="p-5 space-y-1.5">
-            <h3 class="font-display font-bold text-base text-stone-900 dark:text-stone-100 leading-snug">
-              Бархатистый тыквенный суп с&nbsp;кокосовым молоком и&nbsp;имбирем
-            </h3>
-            <p class="text-xs text-stone-500 dark:text-stone-400">
-              Шелковая текстура, легкая пряность и&nbsp;хрустящие семечки
-            </p>
-          </div>
-        </div>
-
-        <div class="group rounded-3xl overflow-hidden border border-black/[0.06] dark:border-white/[0.08] transition-all hover:border-orange-500/40"
-             style="background-color: var(--card-bg);">
-          <div class="aspect-square overflow-hidden bg-stone-100 dark:bg-stone-800">
-            <img src="images/chicken-noodle-soup.webp" 
-                 alt="Куриный суп с имбирем, сельдереем и рисовой лапшой" 
-                 loading="lazy"
-                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-          </div>
-          <div class="p-5 space-y-1.5">
-            <h3 class="font-display font-bold text-base text-stone-900 dark:text-stone-100 leading-snug">
-              Куриный суп с&nbsp;имбирем, сельдереем и&nbsp;рисовой лапшой
-            </h3>
-            <p class="text-xs text-stone-500 dark:text-stone-400">
-              Легкий восстанавливающий бульон в&nbsp;паназиатском стиле
-            </p>
-          </div>
-        </div>
-
-        <div class="group rounded-3xl overflow-hidden border border-black/[0.06] dark:border-white/[0.08] transition-all hover:border-orange-500/40"
-             style="background-color: var(--card-bg);">
-          <div class="aspect-square overflow-hidden bg-stone-100 dark:bg-stone-800">
-            <img src="images/creamy-mushroom-soup.webp" 
-                 alt="Наваристый сливочный суп с курицей и шампиньонами" 
-                 loading="lazy"
-                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-          </div>
-          <div class="p-5 space-y-1.5">
-            <h3 class="font-display font-bold text-base text-stone-900 dark:text-stone-100 leading-snug">
-              Наваристый сливочный суп с&nbsp;курицей и&nbsp;шампиньонами
-            </h3>
-            <p class="text-xs text-stone-500 dark:text-stone-400">
-              Плотная сливочная основа и&nbsp;обжаренные королевские грибы
-            </p>
-          </div>
-        </div>
-
-        <div class="group rounded-3xl overflow-hidden border border-black/[0.06] dark:border-white/[0.08] transition-all hover:border-orange-500/40"
-             style="background-color: var(--card-bg);">
-          <div class="aspect-square overflow-hidden bg-stone-100 dark:bg-stone-800">
-            <img src="images/lentil-soup.webp" 
-                 alt="Пряный чечевичный суп с бадьяном и корицей" 
-                 loading="lazy"
-                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-          </div>
-          <div class="p-5 space-y-1.5">
-            <h3 class="font-display font-bold text-base text-stone-900 dark:text-stone-100 leading-snug">
-              Пряный чечевичный суп с&nbsp;бадьяном и&nbsp;корицей
-            </h3>
-            <p class="text-xs text-stone-500 dark:text-stone-400">
-              Сытная основа, аромат восточных специй и&nbsp;лимонный сок
-            </p>
-          </div>
-        </div>
-
-        <div class="group rounded-3xl overflow-hidden border border-black/[0.06] dark:border-white/[0.08] transition-all hover:border-orange-500/40"
-             style="background-color: var(--card-bg);">
-          <div class="aspect-square overflow-hidden bg-stone-100 dark:bg-stone-800">
-            <img src="images/solyanka.webp" 
-                 alt="Классическая мясная сборная солянка" 
-                 loading="lazy"
-                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-          </div>
-          <div class="p-5 space-y-1.5">
-            <h3 class="font-display font-bold text-base text-stone-900 dark:text-stone-100 leading-snug">
-              Мясная сборная солянка
-            </h3>
-            <p class="text-xs text-stone-500 dark:text-stone-400">
-              Яркий баланс соленого и&nbsp;кислого, оливки и&nbsp;лимон
-            </p>
-          </div>
-        </div>
-
-        <div class="group rounded-3xl overflow-hidden border border-black/[0.06] dark:border-white/[0.08] transition-all hover:border-orange-500/40"
-             style="background-color: var(--card-bg);">
-          <div class="aspect-square overflow-hidden bg-stone-100 dark:bg-stone-800">
-            <img src="images/kharcho.webp" 
-                 alt="Харчо с пряными травами и грецким орехом" 
-                 loading="lazy"
-                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-          </div>
-          <div class="p-5 space-y-1.5">
-            <h3 class="font-display font-bold text-base text-stone-900 dark:text-stone-100 leading-snug">
-              Харчо с&nbsp;пряными травами
-            </h3>
-            <p class="text-xs text-stone-500 dark:text-stone-400">
-              Наваристая основа с&nbsp;тклапи, чесноком и&nbsp;свежей кинзой
-            </p>
-          </div>
-        </div>
-
-        <div class="group rounded-3xl overflow-hidden border border-black/[0.06] dark:border-white/[0.08] transition-all hover:border-orange-500/40"
-             style="background-color: var(--card-bg);">
-          <div class="aspect-square overflow-hidden bg-stone-100 dark:bg-stone-800">
-            <img src="images/potato-soup.webp" 
-                 alt="Деревенский картофельный суп" 
-                 loading="lazy"
-                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-          </div>
-          <div class="p-5 space-y-1.5">
-            <h3 class="font-display font-bold text-base text-stone-900 dark:text-stone-100 leading-snug">
-              Деревенский картофельный суп
-            </h3>
-            <p class="text-xs text-stone-500 dark:text-stone-400">
-              Уютная классика с&nbsp;зеленью и&nbsp;карамелизованным луком
-            </p>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- Призыв внизу галереи -->
-      <div class="mt-12 text-center">
-        <button @click="showTariffs = true"
-                class="px-9 py-3.5 rounded-full bg-orange-600 hover:bg-orange-500 text-white font-display font-bold text-base tracking-wide shadow-lg shadow-orange-600/25 transition-all hover:scale-[1.02] active:scale-95">
-          Выбрать подписку
-        </button>
-      </div>
-
-    </section>
-
-  </main>
-
-  <!-- ================= МОДАЛЬНОЕ ОКНО ТАРИФОВ (ЧЕСТНЫЕ ЦЕНЫ БЕЗ СЛОВА «ВСЕГО») ================= -->
-  <div x-show="showTariffs" 
-       x-cloak 
-       class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md"
-       @keydown.escape.window="showTariffs = false">
-    
-    <!-- Фоновый клик -->
-    <div class="absolute inset-0" @click="showTariffs = false"></div>
-
-    <!-- Модалка -->
-    <div class="relative w-full max-w-2xl rounded-3xl p-6 sm:p-8 shadow-2xl z-10 max-h-[92vh] overflow-y-auto space-y-6 border border-black/10 dark:border-white/10 transition-colors"
-         style="background-color: var(--card-bg);"
-         @click.stop>
-      
-      <!-- Заголовок модалки и закрытие -->
-      <div class="flex items-center justify-between pb-4 border-b border-black/10 dark:border-white/10">
-        <div>
-          <h3 class="font-display font-black text-2xl text-stone-900 dark:text-white">Выбор подписки</h3>
-          <p class="text-xs sm:text-sm text-stone-500 dark:text-stone-400 mt-0.5">Доступ к закрытому Telegram-каналу со всеми рецептами, техниками и базой знаний</p>
-        </div>
-        <button @click="showTariffs = false" 
-                class="w-9 h-9 rounded-full bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 text-stone-700 dark:text-stone-300 flex items-center justify-center transition-colors">
-          <span class="text-2xl leading-none font-light text-stone-500 hover:text-stone-900 dark:hover:text-white">&times;</span>
-        </button>
-      </div>
-
-      <!-- Сетка тарифов -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        
-        <!-- 1 месяц -->
-        <div class="p-5 rounded-2xl bg-black/[0.02] dark:bg-white/[0.03] border border-black/10 dark:border-white/10 flex flex-col justify-between space-y-4 shadow-sm">
-          <div>
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-bold uppercase tracking-wider text-stone-400">1 месяц</span>
-              <span class="text-[10px] font-semibold text-stone-600 dark:text-stone-300 bg-black/5 dark:bg-white/10 px-2 py-0.5 rounded">Старт</span>
-            </div>
-            <div class="text-3xl font-display font-black text-stone-900 dark:text-white mt-2">290 ₽</div>
-            <div class="text-xs text-stone-500 dark:text-stone-400 mt-1 leading-relaxed">
-              290 ₽ в&nbsp;месяц<br>
-              <span class="text-[11px] text-stone-400 dark:text-stone-500">Автопродление раз в&nbsp;30&nbsp;дней</span>
-            </div>
-          </div>
-          <a href="https://t.me/" target="_blank"
-             class="w-full py-3 rounded-xl bg-stone-900 hover:bg-stone-800 text-white dark:bg-white dark:text-stone-950 dark:hover:bg-stone-200 text-xs font-bold text-center transition-colors block">
-            Выбрать подписку
-          </a>
-        </div>
-
-        <!-- 3 месяца -->
-        <div class="p-5 rounded-2xl bg-black/[0.02] dark:bg-white/[0.03] border border-black/10 dark:border-white/10 flex flex-col justify-between space-y-4 shadow-sm">
-          <div>
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-bold uppercase tracking-wider text-stone-400">3 месяца</span>
-              <span class="text-[10px] font-bold text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-400/10 px-2 py-0.5 rounded">-14%</span>
-            </div>
-            <div class="text-3xl font-display font-black text-stone-900 dark:text-white mt-2">750 ₽</div>
-            <div class="text-xs text-stone-600 dark:text-stone-300 mt-1 leading-relaxed font-medium">
-              250 ₽ в&nbsp;месяц<br>
-              <span class="text-[11px] text-stone-400 dark:text-stone-500 font-normal">Автопродление раз в&nbsp;90&nbsp;дней</span>
-            </div>
-          </div>
-          <a href="https://t.me/" target="_blank"
-             class="w-full py-3 rounded-xl bg-stone-900 hover:bg-stone-800 text-white dark:bg-white dark:text-stone-950 dark:hover:bg-stone-200 text-xs font-bold text-center transition-colors block">
-            Выбрать подписку
-          </a>
-        </div>
-
-        <!-- 6 месяцев -->
-        <div class="p-5 rounded-2xl bg-orange-50/50 dark:bg-orange-500/[0.08] border-2 border-orange-600 flex flex-col justify-between space-y-4 relative shadow-lg shadow-orange-600/10">
-          <div>
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-bold uppercase tracking-wider text-orange-600 dark:text-orange-400">6 месяцев</span>
-              <span class="text-[10px] font-bold text-orange-600 dark:text-orange-400 bg-orange-100 dark:bg-orange-400/15 px-2 py-0.5 rounded">-24%</span>
-            </div>
-            <div class="text-3xl font-display font-black text-stone-900 dark:text-white mt-2">1 320 ₽</div>
-            <div class="text-xs text-orange-600 dark:text-orange-400 mt-1 leading-relaxed font-semibold">
-              220 ₽ в&nbsp;месяц<br>
-              <span class="text-[11px] text-stone-500 dark:text-stone-400 font-normal">Автопродление раз в&nbsp;180&nbsp;дней</span>
-            </div>
-          </div>
-          <a href="https://t.me/" target="_blank"
-             class="w-full py-3 rounded-xl bg-orange-600 hover:bg-orange-500 text-white text-xs font-bold text-center transition-colors block shadow-md">
-            Выбрать подписку
-          </a>
-        </div>
-
-        <!-- 365 дней -->
-        <div class="p-5 rounded-2xl bg-black/[0.02] dark:bg-white/[0.03] border border-black/10 dark:border-white/10 flex flex-col justify-between space-y-4 shadow-sm">
-          <div>
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-bold uppercase tracking-wider text-stone-400">365 дней</span>
-              <span class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-400/10 px-2 py-0.5 rounded">-38%</span>
-            </div>
-            <div class="text-3xl font-display font-black text-stone-900 dark:text-white mt-2">2 190 ₽</div>
-            <div class="text-xs text-stone-600 dark:text-stone-300 mt-1 leading-relaxed font-medium">
-              182 ₽ в&nbsp;месяц<br>
-              <span class="text-[11px] text-stone-400 dark:text-stone-500 font-normal">Автопродление 1 раз в&nbsp;год</span>
-            </div>
-          </div>
-          <a href="https://t.me/" target="_blank"
-             class="w-full py-3 rounded-xl bg-stone-900 hover:bg-stone-800 text-white dark:bg-white dark:text-stone-950 dark:hover:bg-stone-200 text-xs font-bold text-center transition-colors block">
-            Выбрать подписку
-          </a>
-        </div>
-
-      </div>
-
-      <!-- Подпись по оплате -->
-      <div class="pt-4 border-t border-black/10 dark:border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-stone-500 dark:text-stone-400">
-        <div class="flex items-center gap-2">
-          <span>Оплата Robokassa:</span>
-          <span class="px-2 py-0.5 bg-black/5 dark:bg-white/10 rounded text-[10px] font-bold text-blue-600 dark:text-blue-400">МИР</span>
-          <span class="px-2 py-0.5 bg-black/5 dark:bg-white/10 rounded text-[10px] font-bold text-emerald-600 dark:text-emerald-400">СБП</span>
-          <span class="px-2 py-0.5 bg-black/5 dark:bg-white/10 rounded text-[10px] font-medium text-stone-700 dark:text-stone-300">Банковские карты</span>
-        </div>
-        <div class="text-[11px] text-stone-400">
-          Отмена в любой момент в 1 клик
-        </div>
-      </div>
-
     </div>
-  </div>
 
-  <!-- ================= ПОДВАЛ ================= -->
-  <footer class="border-t border-black/[0.08] dark:border-white/[0.08] py-12 mt-auto transition-colors"
-          style="background-color: var(--card-bg);">
-    <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
-      
-      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-8 border-b border-black/[0.06] dark:border-white/[0.06] text-xs text-stone-500 dark:text-stone-400">
-        
-        <div class="space-y-1.5">
-          <div class="text-stone-900 dark:text-white font-bold text-sm">Нестеров Никита Александрович</div>
-          <div class="flex flex-wrap items-center gap-x-4 gap-y-1">
-            <span>ИНН: 660408095412</span>
-            <span>Самозанятый</span>
-            <span>E-Mail: <a href="mailto:nik.nesterow201134@gmail.com" class="text-stone-700 dark:text-stone-300 hover:underline">nik.nesterow201134@gmail.com</a></span>
-          </div>
+    <!-- Auth Gate Modal Overlay -->
+    <div class="auth-gate-overlay" id="authGateOverlay">
+        <div class="auth-gate-card">
+            <div class="auth-gate-header">
+                <img src="logo.svg" alt="NNESTEROV" class="auth-gate-logo">
+                <h1 class="auth-gate-title">Вход в&nbsp;базу рецептов</h1>
+                <p class="auth-gate-subtitle">Введите персональный логин и&nbsp;пароль, полученные после оплаты</p>
+            </div>
+            <form class="auth-gate-form" id="loginForm" autocomplete="on">
+                <div class="auth-field">
+                    <label class="auth-label" for="loginInput">Логин или эл.&nbsp;почта</label>
+                    <input type="text" class="auth-input" id="loginInput" placeholder="Ваш логин" required autocomplete="username">
+                </div>
+                <div class="auth-field">
+                    <label class="auth-label" for="passwordInput">Пароль</label>
+                    <div class="password-input-wrap">
+                        <input type="password" class="auth-input" id="passwordInput" placeholder="Ваш пароль" required autocomplete="current-password">
+                        <button type="button" class="password-toggle-btn" aria-label="Показать пароль" data-target="passwordInput">
+                            <svg class="eye-open-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                            <svg class="eye-closed-icon hidden" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="auth-error-msg hidden" id="loginErrorMsg"></div>
+                <button type="submit" class="auth-submit-btn" id="loginSubmitBtn">
+                    <span>Войти в&nbsp;платформу</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+            </form>
+            <div class="auth-gate-footer">
+                <p class="auth-gate-note">При покупке доступ открывается моментально, а&nbsp;данные для&nbsp;входа генерируются автоматически</p>
+                <div class="auth-demo-hint">
+                    <span class="auth-demo-label">Тестовый доступ:</span>
+                    <button type="button" class="auth-demo-fill-btn" id="demoFillBtn">Заполнить: chef / 123456</button>
+                </div>
+            </div>
         </div>
-
-        <div class="flex flex-wrap items-center gap-6 font-semibold text-stone-700 dark:text-stone-300">
-          <a href="offer.html" target="_blank" class="hover:text-orange-600 dark:hover:text-orange-400 transition-colors underline">
-            Публичная оферта
-          </a>
-          <a href="policy.html" target="_blank" class="hover:text-orange-600 dark:hover:text-orange-400 transition-colors underline">
-            Политика конфиденциальности
-          </a>
-          <button @click="showTariffs = true" class="hover:text-orange-600 dark:hover:text-orange-400 transition-colors underline">
-            Тарифы
-          </button>
-        </div>
-
-      </div>
-
-      <div class="pt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-[11px] text-stone-400 dark:text-stone-500">
-        <p>
-          © 2026 NESTEROV. Все права защищены. Любое копирование материалов допускается лишь с&nbsp;согласия правообладателя
-        </p>
-        <div class="flex items-center gap-2 shrink-0">
-          <span>Оплата: МИР • СБП • Robokassa</span>
-        </div>
-      </div>
-
     </div>
-  </footer>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-    });
-  </script>
+    <!-- User Profile & Change Password Modal -->
+    <div class="modal-overlay" id="profileModal">
+        <div class="modal-content profile-modal-content">
+            <button class="modal-close" id="profileModalClose" aria-label="Закрыть">&times;</button>
+            <div class="profile-modal-header">
+                <div class="modal-tag">Учетная запись</div>
+                <h2 class="profile-modal-title">Безопасность и&nbsp;доступ</h2>
+                <div class="profile-user-badge">
+                    <span class="profile-user-label">Активный аккаунт:</span>
+                    <span class="profile-user-id" id="profileUserDisplay">user</span>
+                </div>
+            </div>
+            <div class="profile-modal-body">
+                <form class="profile-password-form" id="changePasswordForm">
+                    <div class="profile-form-title">Смена пароля</div>
+                    <div class="auth-field">
+                        <label class="auth-label" for="oldPasswordInput">Текущий пароль</label>
+                        <div class="password-input-wrap">
+                            <input type="password" class="auth-input" id="oldPasswordInput" placeholder="Введите старый пароль" required autocomplete="current-password">
+                            <button type="button" class="password-toggle-btn" aria-label="Показать пароль" data-target="oldPasswordInput">
+                                <svg class="eye-open-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                <svg class="eye-closed-icon hidden" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="auth-field">
+                        <label class="auth-label" for="newPasswordInput">Новый пароль</label>
+                        <div class="password-input-wrap">
+                            <input type="password" class="auth-input" id="newPasswordInput" placeholder="Придумайте новый пароль" minlength="6" required autocomplete="new-password">
+                            <button type="button" class="password-toggle-btn" aria-label="Показать пароль" data-target="newPasswordInput">
+                                <svg class="eye-open-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                <svg class="eye-closed-icon hidden" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="auth-field">
+                        <label class="auth-label" for="confirmPasswordInput">Повторите новый пароль</label>
+                        <div class="password-input-wrap">
+                            <input type="password" class="auth-input" id="confirmPasswordInput" placeholder="Повторите новый пароль" minlength="6" required autocomplete="new-password">
+                            <button type="button" class="password-toggle-btn" aria-label="Показать пароль" data-target="confirmPasswordInput">
+                                <svg class="eye-open-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                <svg class="eye-closed-icon hidden" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="auth-error-msg hidden" id="passwordChangeErrorMsg"></div>
+                    <div class="auth-success-msg hidden" id="passwordChangeSuccessMsg"></div>
+                    <button type="submit" class="auth-submit-btn" id="changePasswordBtn">
+                        <span>Сохранить новый пароль</span>
+                    </button>
+                </form>
+                <div class="profile-logout-wrap">
+                    <button type="button" class="profile-logout-btn" id="logoutBtn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                        <span>Выйти из&nbsp;аккаунта</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="app.js?v=18"></script>
 </body>
 </html>
