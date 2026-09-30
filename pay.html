@@ -484,6 +484,13 @@
                 shp_email:      email,
             });
 
+            // If URL has ?test=1 or if testing mode is set
+            const urlParams = new URLSearchParams(window.location.search);
+            const isTest = urlParams.get('test') !== '0'; // Default to test mode until explicitly turned off
+            if (isTest) {
+                params.set('IsTest', '1');
+            }
+
             const payUrl = `https://auth.robokassa.ru/Merchant/Index.aspx?${params.toString()}`;
             window.location.href = payUrl;
         }
