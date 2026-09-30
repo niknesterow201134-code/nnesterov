@@ -171,88 +171,49 @@ document.addEventListener('DOMContentLoaded', () => {
         return `${count}&nbsp;ингредиентов`;
     }
 
-    // --- Authentication & Security State (Supabase Cloud + Local Backup) ---
+    // --- Authentication (Supabase Auth — cloud, cross-device, 500+ users) ---
     const SUPABASE_URL = 'https://wmcrshretrerwvcjxper.supabase.co';
     const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndtY3JzaHJldHJlcnd2Y2p4cGVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA3ODg3NDgsImV4cCI6MjEwNjM2NDc0OH0.AdtBc5gYOqXljfdzVLjj7yYbExPYeXnIVfrcHan_4vM';
-    let supabaseClient = null;
-    if (window.supabase && typeof window.supabase.createClient === 'function') {
-        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+    // Supabase JS client — manages sessions automatically (stores tokens in localStorage itself)
+    const supabaseClient = (window.supabase && typeof window.supabase.createClient === 'function')
+        ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
+            auth: {
+                autoRefreshToken: true,
+                persistSession: true,
+                detectSessionInUrl: false
+            }
+        })
+        : null;
+
+    // username → email helper (Supabase Auth requires email)
+    function usernameToEmail(username) {
+        return username.includes('@') ? username : `${username}@nnesterov.ru`;
     }
 
     const AUTH_SESSION_KEY = 'recipe_user_session_v1';
     let currentSession = null;
-    try {
-        currentSession = JSON.parse(localStorage.getItem(AUTH_SESSION_KEY));
-    } catch (e) {
-        currentSession = null;
-    }
 
-    // Dynamic local users storage helpers
-    const LOCAL_USERS_KEY = 'recipe_registered_users_v1';
-
-    // ── Canonical password table (version-controlled) ──────────────────────────
-    // Whenever the chef/admin password is changed centrally, bump PASSWD_VER
-    // and update CANONICAL_PASSWORDS. All devices that have an older version
-    // (or the stale defaults) will be force-migrated on next page load.
-    const PASSWD_VER_KEY = 'recipe_passwd_ver_v1';
-    const PASSWD_VER = 3; // increment each time passwords change centrally
-    const CANONICAL_PASSWORDS = {
-        chef:  { password: 'Xsub6dfnv9!', email: 'chef@nnesterov.ru' },
-        admin: { password: 'Xsub6dfnv9!', email: 'admin@nnesterov.ru' }
-    };
-    // ───────────────────────────────────────────────────────────────────────────
-
-    function getLocalUsers() {
-        let users = {};
+    // Restore session state from Supabase (works across devices via re-login)
+    async function initSession() {
+        if (!supabaseClient) {
+            // Fallback: try cached session from previous auth
+            try { currentSession = JSON.parse(localStorage.getItem(AUTH_SESSION_KEY)); } catch (e) {}
+            return;
+        }
         try {
-            users = JSON.parse(localStorage.getItem(LOCAL_USERS_KEY)) || {};
-        } catch (e) {
-            users = {};
-        }
-        // Ensure baseline accounts exist without clobbering user-defined passwords
-        let needsSave = false;
-        if (!users['chef']) {
-            users['chef'] = { password: CANONICAL_PASSWORDS.chef.password, email: 'chef@nnesterov.ru' };
-            needsSave = true;
-        }
-        if (!users['admin']) {
-            users['admin'] = { password: CANONICAL_PASSWORDS.admin.password, email: 'admin@nnesterov.ru' };
-            needsSave = true;
-        }
-        if (needsSave) {
-            try {
-                localStorage.setItem(LOCAL_USERS_KEY, JSON.stringify(users));
-            } catch (e) {}
-        }
-        return users;
-    }
-
-    function saveLocalUsers(users) {
-        try {
-            localStorage.setItem(LOCAL_USERS_KEY, JSON.stringify(users));
-        } catch (e) {}
-    }
-
-    // ── Versioned migration: force canonical passwords on stale devices ─────────
-    (function migratePasswords() {
-        try {
-            const storedVer = parseInt(localStorage.getItem(PASSWD_VER_KEY) || '0', 10);
-            if (storedVer < PASSWD_VER) {
-                let users = {};
-                try { users = JSON.parse(localStorage.getItem(LOCAL_USERS_KEY)) || {}; } catch (e) {}
-                // Update each managed account to the canonical password
-                for (const [name, creds] of Object.entries(CANONICAL_PASSWORDS)) {
-                    users[name] = { ...creds };
-                }
-                localStorage.setItem(LOCAL_USERS_KEY, JSON.stringify(users));
-                localStorage.setItem(PASSWD_VER_KEY, String(PASSWD_VER));
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session) {
+                // Extract username from email (strip @nnesterov.ru suffix)
+                const email = session.user.email || '';
+                const username = email.endsWith('@nnesterov.ru')
+                    ? email.replace('@nnesterov.ru', '')
+                    : email;
+                currentSession = { token: session.access_token, username };
+                localStorage.setItem(AUTH_SESSION_KEY, JSON.stringify(currentSession));
             }
         } catch (e) {}
-    })();
-    // ───────────────────────────────────────────────────────────────────────────
-
-    // Initialize baseline on load
-    getLocalUsers();
+    }
 
     function checkAuthStatus() {
         if (!currentSession || !currentSession.token) {
@@ -269,18 +230,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function loadRecipesData() {
-        const headers = {};
-        if (currentSession && currentSession.token) {
-            headers['Authorization'] = `Bearer ${currentSession.token}`;
-        }
-
-        fetch('recipes_data.json', { headers })
-            .then(res => {
-                if (res.status === 401 || res.status === 403) {
-                    throw new Error('Unauthorized');
-                }
-                return res.json();
-            })
+        fetch('recipes_data.json')
+            .then(res => res.json())
             .then(data => {
                 appData = data;
                 handleHash();
@@ -288,21 +239,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 updateCartUI();
                 updateFavoritesBadge();
             })
-            .catch(err => {
-                console.error('Failed to load recipe data:', err);
-                if (err.message === 'Unauthorized') {
-                    localStorage.removeItem(AUTH_SESSION_KEY);
-                    currentSession = null;
-                    checkAuthStatus();
-                }
-            });
+            .catch(err => console.error('Failed to load recipe data:', err));
     }
 
-    // Initial Gate Check
-    const isAuthenticated = checkAuthStatus();
-    if (isAuthenticated) {
-        loadRecipesData();
-    }
+    // Initial auth check — async, waits for Supabase session restore
+    (async () => {
+        await initSession();
+        const isAuthenticated = checkAuthStatus();
+        if (isAuthenticated) {
+            loadRecipesData();
+        }
+    })();
 
     // --- Tab Switching ---
     const VALID_TABS = ['breakfasts', 'roti', 'tea', 'sweet_breakfasts', 'soups', 'mains', 'cozy', 'freezer', 'prep_preserves', 'party', 'sauces', 'dressings', 'snacks', 'favorites'];
@@ -1677,74 +1624,23 @@ document.addEventListener('DOMContentLoaded', () => {
             if (submitBtn) submitBtn.disabled = true;
 
             try {
-                let authSuccess = false;
-                let userToken = null;
-                let activeUsername = username;
+                if (!supabaseClient) throw new Error('Supabase not loaded');
 
-                // 1. Try Supabase Cloud Auth first (Cloud synchronization across all devices)
-                if (supabaseClient) {
-                    try {
-                        const emailToTry = username.includes('@') ? username : `${username}@nnesterov.ru`;
-                        const { data: supaData, error: supaErr } = await supabaseClient.auth.signInWithPassword({
-                            email: emailToTry,
-                            password: password
-                        });
+                const email = usernameToEmail(username);
+                const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
 
-                        if (!supaErr && supaData && supaData.session) {
-                            authSuccess = true;
-                            userToken = supaData.session.access_token;
-                            activeUsername = username;
-                        }
-                    } catch (e) {
-                        // Supabase network error or fallback
-                    }
-                }
-
-                // 2. Fallback to local baseline credentials (offline & bootstrap support)
-                if (!authSuccess) {
-                    const users = getLocalUsers();
-                    const userRecord = users[username];
-                    if (userRecord && (userRecord.password === password || userRecord.altPassword === password)) {
-                        authSuccess = true;
-                        userToken = 'tok_' + Math.random().toString(36).substring(2) + Date.now();
-                    }
-                }
-
-                // 3. Fallback to backend API endpoint if exists
-                if (!authSuccess) {
-                    try {
-                        const response = await fetch('/api/login', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ username, password })
-                        });
-                        if (response.ok) {
-                            const authRes = await response.json();
-                            authSuccess = true;
-                            userToken = authRes.token;
-                            activeUsername = authRes.username || username;
-                        } else if (response.status !== 404) {
-                            const errData = await response.json().catch(() => ({}));
-                            loginErrorMsg.textContent = errData.message || 'Неверный логин или пароль';
-                            loginErrorMsg.classList.remove('hidden');
-                            return;
-                        }
-                    } catch (netErr) {
-                        // Offline or static file server
-                    }
-                }
-
-                if (authSuccess && userToken) {
-                    currentSession = {
-                        token: userToken,
-                        username: activeUsername
-                    };
+                if (!error && data && data.session) {
+                    currentSession = { token: data.session.access_token, username };
                     localStorage.setItem(AUTH_SESSION_KEY, JSON.stringify(currentSession));
                     checkAuthStatus();
                     loadRecipesData();
                     showToast('Вход успешно выполнен');
                 } else {
-                    loginErrorMsg.textContent = 'Неверный логин или пароль';
+                    // Distinguish wrong password from email not confirmed
+                    const msg = (error && error.message && error.message.includes('Email not confirmed'))
+                        ? 'Аккаунт не&nbsp;активирован — обратитесь к&nbsp;администратору'
+                        : 'Неверный логин или пароль';
+                    loginErrorMsg.innerHTML = msg;
                     loginErrorMsg.classList.remove('hidden');
                 }
             } catch (err) {
@@ -1759,36 +1655,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // Official Telegram Login Widget Callback (Signed by Telegram)
     window.onTelegramAuth = function(user) {
         if (!user || !user.id) return;
-        
-        // Telegram verified identity payload
         const tgDisplayName = user.first_name || user.username || `User_${user.id}`;
         const activeUsername = user.username ? `@${user.username}` : `tg_${user.id}`;
-        
         currentSession = {
             token: `tg_auth_${user.id}_${user.auth_date}_${user.hash}`,
             username: activeUsername,
             tgUser: user
         };
-        
         localStorage.setItem(AUTH_SESSION_KEY, JSON.stringify(currentSession));
         checkAuthStatus();
         loadRecipesData();
         showToast(`Добро пожаловать, ${tgDisplayName}`);
     };
-
-    // Demo Fill Button Handler
-    const demoFillBtn = document.getElementById('demoFillBtn');
-    if (demoFillBtn) {
-        demoFillBtn.addEventListener('click', () => {
-            // Always use the canonical password, never stale localStorage value
-            if (loginInput) loginInput.value = 'chef';
-            if (passwordInput) passwordInput.value = CANONICAL_PASSWORDS.chef.password;
-            if (loginErrorMsg) {
-                loginErrorMsg.classList.add('hidden');
-                loginErrorMsg.textContent = '';
-            }
-        });
-    }
 
     // Password visibility toggle handler (eye icon)
     document.querySelectorAll('.password-toggle-btn').forEach(btn => {
@@ -1886,70 +1764,29 @@ document.addEventListener('DOMContentLoaded', () => {
             if (changeBtn) changeBtn.disabled = true;
 
             try {
-                const rawUsername = currentSession && currentSession.username ? currentSession.username : 'chef';
-                const username = rawUsername.trim().toLowerCase();
-                let changedLocally = false;
+                if (!supabaseClient || !currentSession) throw new Error('no session');
 
-                // 1. Try local update first with fresh records
-                const users = getLocalUsers();
-                if (users[username]) {
-                    const rec = users[username];
-                    if (rec.password === oldPass || rec.altPassword === oldPass) {
-                        rec.password = newPass;
-                        delete rec.altPassword;
-                        saveLocalUsers(users);
-                        changedLocally = true;
-                    } else {
-                        passwordChangeErrorMsg.textContent = 'Текущий пароль указан неверно';
-                        passwordChangeErrorMsg.classList.remove('hidden');
-                        if (changeBtn) changeBtn.disabled = false;
-                        return;
-                    }
-                } else {
-                    // In case user profile username didn't exist in localUsers, register it
-                    users[username] = { password: newPass, email: `${username}@nnesterov.ru` };
-                    saveLocalUsers(users);
-                    changedLocally = true;
-                }
+                const username = (currentSession.username || '').trim().toLowerCase();
+                const email = usernameToEmail(username);
 
-                // 2. Also sync with Supabase Cloud so the new password works on all devices instantly
-                if (supabaseClient) {
-                    try {
-                        const { error: supaUpErr } = await supabaseClient.auth.updateUser({
-                            password: newPass
-                        });
-                        if (!supaUpErr) {
-                            changedLocally = true;
-                        }
-                    } catch (e) {
-                        // fallback to local/api
-                    }
-                }
-
-                // 3. Also sync with backend server if live endpoint exists
-                try {
-                    await fetch('/api/change-password', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${currentSession ? currentSession.token : ''}`
-                        },
-                        body: JSON.stringify({ oldPassword: oldPass, newPassword: newPass })
-                    });
-                } catch (netErr) {
-                    // Static / offline host
-                }
-
-                if (changedLocally) {
-                    passwordChangeSuccessMsg.textContent = 'Пароль успешно обновлен';
-                    passwordChangeSuccessMsg.classList.remove('hidden');
-                    changePasswordForm.reset();
-                    showToast('Пароль успешно изменен');
-                    setTimeout(() => closeProfileModal(), 1200);
-                } else {
-                    passwordChangeErrorMsg.textContent = 'Ошибка смены пароля&nbsp;— проверьте текущий пароль';
+                // 1. Re-authenticate with old password to verify it's correct
+                const { error: verifyErr } = await supabaseClient.auth.signInWithPassword({ email, password: oldPass });
+                if (verifyErr) {
+                    passwordChangeErrorMsg.textContent = 'Текущий пароль указан неверно';
                     passwordChangeErrorMsg.classList.remove('hidden');
+                    if (changeBtn) changeBtn.disabled = false;
+                    return;
                 }
+
+                // 2. Update password in Supabase — instantly synced to ALL devices
+                const { error: updateErr } = await supabaseClient.auth.updateUser({ password: newPass });
+                if (updateErr) throw updateErr;
+
+                passwordChangeSuccessMsg.textContent = 'Пароль успешно обновлен на&nbsp;всех устройствах';
+                passwordChangeSuccessMsg.classList.remove('hidden');
+                changePasswordForm.reset();
+                showToast('Пароль успешно изменен');
+                setTimeout(() => closeProfileModal(), 1200);
             } catch (err) {
                 passwordChangeErrorMsg.textContent = 'Не&nbsp;удалось сменить пароль&nbsp;— попробуйте позже';
                 passwordChangeErrorMsg.classList.remove('hidden');
@@ -1961,7 +1798,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Logout
     if (logoutBtn) {
-        logoutBtn.addEventListener('click', () => {
+        logoutBtn.addEventListener('click', async () => {
+            if (supabaseClient) {
+                await supabaseClient.auth.signOut().catch(() => {});
+            }
             localStorage.removeItem(AUTH_SESSION_KEY);
             currentSession = null;
             closeProfileModal();
