@@ -175,13 +175,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const SUPABASE_URL = 'https://wmcrshretrerwvcjxper.supabase.co';
     const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndtY3JzaHJldHJlcnd2Y2p4cGVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA3ODg3NDgsImV4cCI6MjEwNjM2NDc0OH0.AdtBc5gYOqXljfdzVLjj7yYbExPYeXnIVfrcHan_4vM';
 
-    // Supabase JS client — manages sessions automatically (stores tokens in localStorage itself)
+    // detectSessionInUrl: true — needed so magic links from invite emails work
     const supabaseClient = (window.supabase && typeof window.supabase.createClient === 'function')
         ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
             auth: {
                 autoRefreshToken: true,
                 persistSession: true,
-                detectSessionInUrl: false
+                detectSessionInUrl: true
             }
         })
         : null;
@@ -191,25 +191,148 @@ document.addEventListener('DOMContentLoaded', () => {
         return username.includes('@') ? username : `${username}@nnesterov.ru`;
     }
 
+    // email → display username
+    function emailToUsername(email) {
+        return email.endsWith('@nnesterov.ru') ? email.replace('@nnesterov.ru', '') : email;
+    }
+
     const AUTH_SESSION_KEY = 'recipe_user_session_v1';
     let currentSession = null;
 
-    // Restore session state from Supabase (works across devices via re-login)
+    // ── Invite / Magic Link handler ────────────────────────────────────────────
+    // When a buyer clicks "Activate" in the invite email, Supabase redirects to
+    // the site with #access_token=...&type=invite in the URL hash.
+    // We catch this, show a "Set your password" form, and after they submit —
+    // they're fully logged in and can access the platform from any device.
+
+    async function handleInviteLink() {
+        if (!supabaseClient) return false;
+
+        // Let Supabase parse the URL hash tokens
+        const { data: { session }, error } = await supabaseClient.auth.getSession();
+
+        // Check if URL hash contains invite/recovery type
+        const hash = window.location.hash;
+        const isInvite = hash.includes('type=invite') || hash.includes('type=recovery') || hash.includes('type=signup');
+
+        if (!isInvite && !session) return false;
+        if (!session) return false;
+
+        // This is an invite link — show "Set your password" overlay
+        const email = session.user.email || '';
+        showSetPasswordOverlay(email, session.access_token);
+        // Clear the hash from URL to avoid re-triggering
+        history.replaceState(null, '', window.location.pathname);
+        return true;
+    }
+
+    function showSetPasswordOverlay(email, accessToken) {
+        // Remove existing overlay if any
+        const existing = document.getElementById('setPasswordOverlay');
+        if (existing) existing.remove();
+
+        const overlay = document.createElement('div');
+        overlay.id = 'setPasswordOverlay';
+        overlay.style.cssText = `
+            position:fixed;inset:0;z-index:9999;
+            background:var(--bg-primary,#0d0d0d);
+            display:flex;align-items:center;justify-content:center;
+            padding:24px;
+        `;
+        overlay.innerHTML = `
+            <div style="width:100%;max-width:400px;background:var(--bg-secondary,#1a1a1a);border-radius:16px;padding:32px 28px;">
+                <div style="font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-secondary,#888);margin-bottom:12px;">Добро пожаловать</div>
+                <h2 style="font-size:22px;font-weight:700;color:var(--text-primary,#fff);margin:0 0 8px;">Придумайте пароль</h2>
+                <p style="font-size:14px;color:var(--text-secondary,#888);margin:0 0 24px;line-height:1.5;">Аккаунт создан для <strong style="color:var(--text-primary,#fff)">${email}</strong>.<br>Выберите пароль для&nbsp;входа с&nbsp;любого устройства</p>
+                <div style="margin-bottom:16px;">
+                    <label style="display:block;font-size:12px;color:var(--text-secondary,#888);margin-bottom:6px;letter-spacing:.05em;text-transform:uppercase;">Новый пароль</label>
+                    <input id="inviteNewPass" type="password" placeholder="Минимум 6 символов"
+                        style="width:100%;box-sizing:border-box;padding:12px 14px;background:var(--bg-tertiary,#222);border:1px solid var(--border,#333);border-radius:8px;color:var(--text-primary,#fff);font-size:15px;outline:none;">
+                </div>
+                <div style="margin-bottom:24px;">
+                    <label style="display:block;font-size:12px;color:var(--text-secondary,#888);margin-bottom:6px;letter-spacing:.05em;text-transform:uppercase;">Повторите пароль</label>
+                    <input id="inviteConfirmPass" type="password" placeholder="Повторите пароль"
+                        style="width:100%;box-sizing:border-box;padding:12px 14px;background:var(--bg-tertiary,#222);border:1px solid var(--border,#333);border-radius:8px;color:var(--text-primary,#fff);font-size:15px;outline:none;">
+                </div>
+                <div id="invitePassError" style="display:none;color:#e05;font-size:13px;margin-bottom:16px;"></div>
+                <button id="invitePassSubmit"
+                    style="width:100%;padding:14px;background:var(--text-primary,#fff);color:var(--bg-primary,#0d0d0d);border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;letter-spacing:.03em;">
+                    Сохранить и войти
+                </button>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+        document.body.style.overflow = 'hidden';
+
+        const newPassInput = overlay.querySelector('#inviteNewPass');
+        const confirmPassInput = overlay.querySelector('#inviteConfirmPass');
+        const errorEl = overlay.querySelector('#invitePassError');
+        const submitBtn = overlay.querySelector('#invitePassSubmit');
+
+        submitBtn.addEventListener('click', async () => {
+            const newPass = newPassInput.value;
+            const confirmPass = confirmPassInput.value;
+
+            if (newPass.length < 6) {
+                errorEl.textContent = 'Пароль должен быть не менее 6 символов';
+                errorEl.style.display = 'block';
+                return;
+            }
+            if (newPass !== confirmPass) {
+                errorEl.textContent = 'Пароли не совпадают';
+                errorEl.style.display = 'block';
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Сохраняем...';
+            errorEl.style.display = 'none';
+
+            try {
+                const { error: updateErr } = await supabaseClient.auth.updateUser({ password: newPass });
+                if (updateErr) throw updateErr;
+
+                // Password set — now get fresh session and enter the platform
+                const { data: { session: freshSession } } = await supabaseClient.auth.getSession();
+                if (freshSession) {
+                    currentSession = {
+                        token: freshSession.access_token,
+                        username: emailToUsername(email)
+                    };
+                    localStorage.setItem(AUTH_SESSION_KEY, JSON.stringify(currentSession));
+                }
+
+                overlay.remove();
+                document.body.style.overflow = '';
+                checkAuthStatus();
+                loadRecipesData();
+                showToast('Пароль установлен — добро пожаловать!');
+            } catch (err) {
+                errorEl.textContent = 'Ошибка — попробуйте ещё раз';
+                errorEl.style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Сохранить и войти';
+            }
+        });
+
+        // Submit on Enter
+        [newPassInput, confirmPassInput].forEach(inp => {
+            inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') submitBtn.click(); });
+        });
+    }
+    // ──────────────────────────────────────────────────────────────────────────
+
+    // Restore session state from Supabase
     async function initSession() {
         if (!supabaseClient) {
-            // Fallback: try cached session from previous auth
             try { currentSession = JSON.parse(localStorage.getItem(AUTH_SESSION_KEY)); } catch (e) {}
             return;
         }
         try {
             const { data: { session } } = await supabaseClient.auth.getSession();
             if (session) {
-                // Extract username from email (strip @nnesterov.ru suffix)
                 const email = session.user.email || '';
-                const username = email.endsWith('@nnesterov.ru')
-                    ? email.replace('@nnesterov.ru', '')
-                    : email;
-                currentSession = { token: session.access_token, username };
+                currentSession = { token: session.access_token, username: emailToUsername(email) };
                 localStorage.setItem(AUTH_SESSION_KEY, JSON.stringify(currentSession));
             }
         } catch (e) {}
@@ -242,12 +365,15 @@ document.addEventListener('DOMContentLoaded', () => {
             .catch(err => console.error('Failed to load recipe data:', err));
     }
 
-    // Initial auth check — async, waits for Supabase session restore
+    // Initial auth check — handle invite links first, then normal session
     (async () => {
-        await initSession();
-        const isAuthenticated = checkAuthStatus();
-        if (isAuthenticated) {
-            loadRecipesData();
+        const wasInvite = await handleInviteLink();
+        if (!wasInvite) {
+            await initSession();
+            const isAuthenticated = checkAuthStatus();
+            if (isAuthenticated) {
+                loadRecipesData();
+            }
         }
     })();
 

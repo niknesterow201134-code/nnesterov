@@ -1,0 +1,20 @@
+project_id = "wmcrshretrerwvcjxper"
+
+[api]
+enabled = true
+port = 54321
+
+[auth]
+enabled = true
+site_url = "https://niknesterow201134-code.github.io/nnesterov/"
+additional_redirect_urls = ["https://niknesterow201134-code.github.io/nnesterov/"]
+jwt_expiry = 3600
+enable_refresh_token_rotation = true
+
+[auth.email]
+enable_signup = true
+double_confirm_changes = false
+enable_confirmations = false
+
+[functions.robokassa-webhook]
+verify_jwt = false
