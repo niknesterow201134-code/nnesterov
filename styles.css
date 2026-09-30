@@ -2367,6 +2367,15 @@ header {
   color: var(--text-muted);
 }
 
+.telegram-widget-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 48px;
+  margin-top: 4px;
+}
+
 .auth-telegram-btn {
   display: flex;
   align-items: center;
