@@ -8,22 +8,23 @@
 //
 // Set secrets:
 //   npx supabase secrets set ROBOKASSA_PASSWORD2=<твой_пароль2> --project-ref wmcrshretrerwvcjxper
-//   npx supabase secrets set SUPABASE_SERVICE_ROLE_KEY=<service_role_key> --project-ref wmcrshretrerwvcjxper
+//   npx supabase secrets set SERVICE_ROLE_KEY=<service_role_key> --project-ref wmcrshretrerwvcjxper
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import md5 from "https://esm.sh/md5@2.3.0";
 
 const SUPABASE_URL = "https://wmcrshretrerwvcjxper.supabase.co";
 const SITE_URL = "https://niknesterow201134-code.github.io/nnesterov/";
 
 // Verify RoboKassa MD5 signature
 // Format: MD5(OutSum:InvId:Password2[:shp_params_sorted])
-async function verifyRobokassaSignature(
+function verifyRobokassaSignature(
   outSum: string,
   invId: string,
   signatureFromRobokassa: string,
   password2: string,
   extraParams: Record<string, string>
-): Promise<boolean> {
+): boolean {
   // Build shp_* params string (sorted alphabetically, case-insensitive)
   const shpParts = Object.entries(extraParams)
     .filter(([k]) => k.toLowerCase().startsWith("shp_"))
@@ -35,14 +36,10 @@ async function verifyRobokassaSignature(
     ? `${outSum}:${invId}:${password2}:${shpParts}`
     : `${outSum}:${invId}:${password2}`;
 
-  const encoder = new TextEncoder();
-  const data = encoder.encode(raw);
-  const hashBuffer = await crypto.subtle.digest("MD5", data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  const computed = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("").toLowerCase();
-
+  const computed = md5(raw).toLowerCase();
   return computed === signatureFromRobokassa.toLowerCase();
 }
+
 
 Deno.serve(async (req: Request) => {
   // RoboKassa sends POST with application/x-www-form-urlencoded
@@ -60,7 +57,7 @@ Deno.serve(async (req: Request) => {
   const buyerEmail = params.get("shp_email") || params.get("Email") || "";
 
   const password2 = Deno.env.get("ROBOKASSA_PASSWORD2") || "";
-  const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
+  const serviceRoleKey = Deno.env.get("SERVICE_ROLE_KEY") || "";
 
   if (!password2 || !serviceRoleKey) {
     console.error("Missing env vars: ROBOKASSA_PASSWORD2 or SUPABASE_SERVICE_ROLE_KEY");
@@ -76,7 +73,7 @@ Deno.serve(async (req: Request) => {
   }
 
   // Verify signature
-  const isValid = await verifyRobokassaSignature(outSum, invId, signatureValue, password2, extraParams);
+  const isValid = verifyRobokassaSignature(outSum, invId, signatureValue, password2, extraParams);
   if (!isValid) {
     console.error("Invalid RoboKassa signature", { outSum, invId, signatureValue });
     return new Response("Invalid signature", { status: 403 });
