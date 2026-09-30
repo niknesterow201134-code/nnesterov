@@ -224,6 +224,15 @@
                     </svg>
                     <span>Войти через Telegram</span>
                 </button>
+
+                <!-- Инлайн форма быстрого входа через Telegram -->
+                <div class="telegram-login-box hidden" id="telegramLoginBox">
+                    <label class="auth-label" for="tgUsernameInput">Ваш Telegram @username</label>
+                    <div class="telegram-input-row">
+                        <input type="text" class="auth-input" id="tgUsernameInput" placeholder="@username">
+                        <button type="button" class="auth-telegram-submit-btn" id="tgSubmitBtn">Войти</button>
+                    </div>
+                </div>
             </form>
             <div class="auth-gate-footer">
                 <p class="auth-gate-note">При покупке доступ открывается моментально, а&nbsp;данные для&nbsp;входа синхронизируются на&nbsp;всех устройствах</p>
@@ -299,6 +308,6 @@
     <!-- Toast Notification Container -->
     <div class="toast-container" id="toastContainer"></div>
 
-    <script src="app.js?v=18"></script>
+    <script src="app.js?v=20"></script>
 </body>
 </html>

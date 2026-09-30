@@ -1728,8 +1728,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Telegram Auth Handler
     const telegramAuthBtn = document.getElementById('telegramAuthBtn');
+    const telegramLoginBox = document.getElementById('telegramLoginBox');
+    const tgUsernameInput = document.getElementById('tgUsernameInput');
+    const tgSubmitBtn = document.getElementById('tgSubmitBtn');
+
+    function executeTelegramLogin(rawName) {
+        if (!rawName || !rawName.trim()) return;
+        const cleanTg = rawName.trim().replace(/^@/, '').toLowerCase();
+        currentSession = {
+            token: 'tg_web_' + cleanTg + '_' + Date.now(),
+            username: cleanTg
+        };
+        localStorage.setItem(AUTH_SESSION_KEY, JSON.stringify(currentSession));
+        checkAuthStatus();
+        loadRecipesData();
+        showToast(`Вход выполнен: @${cleanTg}`);
+    }
+
     if (telegramAuthBtn) {
-        telegramAuthBtn.addEventListener('click', () => {
+        telegramAuthBtn.addEventListener('click', (e) => {
+            e.preventDefault();
             // If opened inside Telegram WebApp
             if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
                 const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
@@ -1745,18 +1763,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // If opened in external browser, prompt for personal Telegram ID or username
-            const tgLogin = prompt('Введите ваш Telegram @username или ID из закрытого канала для быстрой авторизации:');
-            if (tgLogin && tgLogin.trim()) {
-                const cleanTg = tgLogin.trim().replace(/^@/, '').toLowerCase();
-                currentSession = {
-                    token: 'tg_web_' + cleanTg + '_' + Date.now(),
-                    username: cleanTg
-                };
-                localStorage.setItem(AUTH_SESSION_KEY, JSON.stringify(currentSession));
-                checkAuthStatus();
-                loadRecipesData();
-                showToast(`Вход выполнен: @${cleanTg}`);
+            // In browser: reveal inline input
+            if (telegramLoginBox) {
+                telegramLoginBox.classList.toggle('hidden');
+                if (!telegramLoginBox.classList.contains('hidden') && tgUsernameInput) {
+                    tgUsernameInput.focus();
+                }
+            }
+        });
+    }
+
+    if (tgSubmitBtn && tgUsernameInput) {
+        tgSubmitBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            executeTelegramLogin(tgUsernameInput.value);
+        });
+
+        tgUsernameInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                executeTelegramLogin(tgUsernameInput.value);
             }
         });
     }

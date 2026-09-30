@@ -2391,6 +2391,42 @@ header {
   box-shadow: 3px 3px 0px rgba(36, 161, 222, 0.4);
 }
 
+.telegram-login-box {
+  margin-top: 14px;
+  padding: 12px;
+  background: rgba(36, 161, 222, 0.08);
+  border: 1px solid rgba(36, 161, 222, 0.25);
+}
+
+.telegram-input-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.telegram-input-row .auth-input {
+  margin-bottom: 0;
+  flex: 1;
+}
+
+.auth-telegram-submit-btn {
+  padding: 0 18px;
+  background: #24A1DE;
+  color: #FFFFFF;
+  border: var(--brutal-border-width) solid #24A1DE;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: var(--brutal-shadow-sm);
+  transition: transform 0.15s, background-color 0.15s;
+}
+
+.auth-telegram-submit-btn:hover {
+  background: #208EC4;
+  transform: translate(-1px, -1px);
+}
+
 .auth-gate-footer {
   border-top: 1px solid var(--separator);
   padding-top: 14px;
