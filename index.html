@@ -1,42 +1,292 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Сайт временно недоступен</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background-color: #0C0E0D;
-      color: #FAF9F6;
-    }
-    .wrap {
-      text-align: center;
-      padding: 24px;
-    }
-    h1 {
-      font-size: 24px;
-      font-weight: 700;
-      margin: 0 0 12px;
-      color: #FAF9F6;
-    }
-    p {
-      font-size: 15px;
-      color: #9DA19E;
-      margin: 0;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"></noscript>
+    <link rel="stylesheet" href="styles.css?v=13">
+    <script src="https://telegram.org/js/telegram-web-app.js" defer></script>
 </head>
 <body>
-  <div class="wrap">
-    <h1>Техническое обслуживание</h1>
-    <p>Сайт временно выключен и&nbsp;находится на&nbsp;обслуживании</p>
-  </div>
+    <div class="container">
+        <header>
+            <div class="header-left">
+                <a href="#" class="header-logo" aria-label="NNESTEROV">
+                    <img src="logo.svg" alt="NNESTEROV" class="header-logo-img">
+                </a>
+            </div>
+            <div class="header-right">
+                <button class="header-fav-btn" id="headerFavBtn" data-tab="favorites" aria-label="Избранное">
+                    <img src="heart_filled.svg" alt="Избранное" class="header-fav-icon-img">
+                    <span class="header-fav-count hidden" id="headerFavBadge">0</span>
+                </button>
+                <button class="shopping-list-btn" id="openShoppingBtn" aria-label="Список покупок">
+                    <img src="icon_cart.png" alt="" class="header-action-icon header-cart-icon">
+                    <span>Список покупок</span>
+                    <span class="shopping-badge hidden" id="shoppingBadge">0</span>
+                </button>
+                <button class="theme-toggle" id="themeToggle" aria-label="Сменить тему">
+                    <img src="icon_moon.png" id="moonIcon" alt="Ночная тема" class="header-action-icon header-theme-icon hidden">
+                    <img src="icon_sun.png" id="sunIcon" alt="Дневная тема" class="header-action-icon header-theme-icon">
+                </button>
+                <button class="header-profile-btn" id="headerProfileBtn" aria-label="Профиль доступа">
+                    <img src="icon_profile.png" alt="Профиль" class="header-action-icon header-profile-icon">
+                </button>
+            </div>
+        </header>
+
+        <div class="nav-bar">
+            <div class="nav-scroll-wrap">
+                <button class="nav-arrow-btn nav-arrow-left" id="navArrowLeft" aria-label="Прокрутить назад">
+                    <img src="arrow_left.svg" alt="" class="nav-arrow-icon">
+                </button>
+                <nav class="tabs" id="mainTabs">
+                    <button class="tab-btn active" data-tab="breakfasts">Завтраки</button>
+                    <button class="tab-btn" data-tab="roti">Рецепты с&nbsp;роти</button>
+                    <button class="tab-btn" data-tab="tea">Чай</button>
+                    <button class="tab-btn" data-tab="sweet_breakfasts">Сладкие завтраки</button>
+                    <button class="tab-btn" data-tab="soups">Супы</button>
+                    <button class="tab-btn" data-tab="mains">Вторые блюда</button>
+                    <button class="tab-btn" data-tab="cozy">Осенние блюда</button>
+                    <button class="tab-btn" data-tab="freezer">Для&nbsp;заморозки</button>
+                    <button class="tab-btn" data-tab="prep_preserves">Заготовки</button>
+                    <button class="tab-btn" data-tab="party">На&nbsp;компанию</button>
+                    <button class="tab-btn" data-tab="sauces">Соусы</button>
+                    <button class="tab-btn" data-tab="dressings">Заправки к&nbsp;салатам</button>
+                    <button class="tab-btn" data-tab="snacks">Перекусы</button>
+                </nav>
+                <button class="nav-arrow-btn nav-arrow-right" id="navArrowRight" aria-label="Прокрутить вперед">
+                    <img src="arrow_right.svg" alt="" class="nav-arrow-icon">
+                </button>
+            </div>
+        </div>
+
+        <div class="toolbar" id="toolbar">
+            <div class="search-box">
+                <input type="text" class="search-input" id="searchInput" placeholder="Поиск по&nbsp;названию блюда или ингредиенту">
+            </div>
+        </div>
+
+        <main>
+            <div class="recipe-grid" id="recipesGrid">
+                <!-- Recipe cards dynamically injected -->
+            </div>
+            <div class="empty-state hidden" id="emptyState">
+                Ничего не&nbsp;найдено по&nbsp;вашему запросу
+            </div>
+            <div class="empty-state hidden" id="favoritesEmptyState">
+                В&nbsp;избранном пока пусто&nbsp;— нажимайте сердечко на&nbsp;любом блюде, чтобы сохранить его здесь
+            </div>
+        </main>
+    </div>
+
+    <!-- Floating Quick Bar for Shopping List -->
+    <div class="floating-cart-bar hidden" id="floatingCartBar">
+        <div class="floating-cart-info">
+            <span class="floating-cart-count" id="floatingCartCount">В&nbsp;списке 0 блюд</span>
+            <span class="floating-cart-sub" id="floatingCartSub">Чек-лист для&nbsp;похода в&nbsp;магазин</span>
+        </div>
+        <button class="floating-cart-action" id="floatingOpenShoppingBtn">
+            <span>Открыть список</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+    </div>
+
+    <!-- Recipe Detail Modal -->
+    <div class="modal-overlay" id="recipeModal">
+        <div class="modal-content">
+            <button class="modal-close" id="modalClose" aria-label="Закрыть">&times;</button>
+            <div id="modalBody">
+                <!-- Injected via app.js -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Shopping List Modal -->
+    <div class="modal-overlay" id="shoppingModal">
+        <div class="modal-content shopping-modal-content">
+            <button class="modal-close" id="shoppingModalClose" aria-label="Закрыть">&times;</button>
+            <div class="shopping-modal-header">
+                <div class="modal-tag">Чек-лист для&nbsp;супермаркета</div>
+                <h2 class="shopping-modal-title">Список покупок</h2>
+                <div class="shopping-modal-actions" id="shoppingModalActions">
+                    <button class="shopping-action-btn copy-btn" id="copyShoppingListBtn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"><rect x="9" y="9" width="13" height="13" rx="0" ry="0"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                        <span>Скопировать список в&nbsp;буфер</span>
+                    </button>
+                    <div class="shopping-clear-wrap" id="shoppingClearWrap">
+                        <button class="shopping-action-btn clear-btn" id="clearShoppingListBtn">
+                            Очистить список
+                        </button>
+                        <div class="shopping-clear-confirm hidden" id="shoppingClearConfirm">
+                            <span class="shopping-clear-text">Точно очистить?</span>
+                            <button class="shopping-confirm-yes-btn" id="clearShoppingYesBtn">Да</button>
+                            <button class="shopping-confirm-no-btn" id="clearShoppingNoBtn">Отмена</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="shopping-view-toggle" id="shoppingViewToggle">
+                    <button class="shopping-view-btn active" data-mode="categories" id="viewCategoriesBtn">По&nbsp;отделам</button>
+                    <button class="shopping-view-btn" data-mode="unified" id="viewUnifiedBtn">Единым списком</button>
+                </div>
+            </div>
+            <div class="shopping-modal-body" id="shoppingModalBody">
+                <!-- Injected via app.js -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Hands-Free Chef Mode Modal -->
+    <div class="modal-overlay chef-mode-overlay" id="chefModeModal">
+        <div class="chef-mode-container">
+            <div class="chef-mode-header">
+                <div class="chef-mode-progress-info">
+                    <span class="chef-mode-step-badge" id="chefModeStepBadge">Шаг 1 из&nbsp;5</span>
+                    <span class="chef-mode-recipe-title" id="chefModeRecipeTitle"></span>
+                </div>
+                <button class="chef-mode-close" id="chefModeClose" aria-label="Завершить готовку">Завершить</button>
+            </div>
+            <div class="chef-mode-progress-bar">
+                <div class="chef-mode-progress-fill" id="chefModeProgressFill"></div>
+            </div>
+            <div class="chef-mode-body" id="chefModeBody">
+                <div class="chef-mode-step-text" id="chefModeStepText"></div>
+                <div class="chef-mode-step-timer-wrap" id="chefModeStepTimerWrap"></div>
+            </div>
+            <div class="chef-mode-footer">
+                <button class="chef-nav-btn prev-btn" id="chefModePrevBtn" disabled>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    <span>Назад</span>
+                </button>
+                <button class="chef-nav-btn next-btn" id="chefModeNextBtn">
+                    <span>Следующий шаг</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Global Floating Active Cooking Timer Widget -->
+    <div class="active-timer-widget hidden" id="activeTimerWidget">
+        <div class="timer-widget-info">
+            <span class="timer-widget-label">Таймер блюда</span>
+            <span class="timer-widget-time" id="timerWidgetTime">00:00</span>
+        </div>
+        <div class="timer-widget-controls">
+            <button class="timer-widget-btn" id="timerWidgetToggleBtn" aria-label="Пауза или старт">
+                <svg id="timerPauseIcon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+                <svg id="timerPlayIcon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" class="hidden"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+            </button>
+            <button class="timer-widget-btn" id="timerWidgetStopBtn" aria-label="Сбросить">✕</button>
+        </div>
+    </div>
+
+    <!-- Auth Gate Modal Overlay -->
+    <div class="auth-gate-overlay" id="authGateOverlay">
+        <div class="auth-gate-card">
+            <div class="auth-gate-header">
+                <img src="logo.svg" alt="NNESTEROV" class="auth-gate-logo">
+                <h1 class="auth-gate-title">Вход в&nbsp;базу рецептов</h1>
+                <p class="auth-gate-subtitle">Введите персональный логин и&nbsp;пароль, полученные после оплаты</p>
+            </div>
+            <form class="auth-gate-form" id="loginForm" autocomplete="on">
+                <div class="auth-field">
+                    <label class="auth-label" for="loginInput">Логин или эл.&nbsp;почта</label>
+                    <input type="text" class="auth-input" id="loginInput" placeholder="Ваш логин" required autocomplete="username">
+                </div>
+                <div class="auth-field">
+                    <label class="auth-label" for="passwordInput">Пароль</label>
+                    <div class="password-input-wrap">
+                        <input type="password" class="auth-input" id="passwordInput" placeholder="Ваш пароль" required autocomplete="current-password">
+                        <button type="button" class="password-toggle-btn" aria-label="Показать пароль" data-target="passwordInput">
+                            <svg class="eye-open-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                            <svg class="eye-closed-icon hidden" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="auth-error-msg hidden" id="loginErrorMsg"></div>
+                <button type="submit" class="auth-submit-btn" id="loginSubmitBtn">
+                    <span>Войти в&nbsp;платформу</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+            </form>
+            <div class="auth-gate-footer">
+                <p class="auth-gate-note">При покупке доступ открывается моментально, а&nbsp;данные для&nbsp;входа генерируются автоматически</p>
+                <div class="auth-demo-hint">
+                    <span class="auth-demo-label">Тестовый доступ:</span>
+                    <button type="button" class="auth-demo-fill-btn" id="demoFillBtn">Заполнить: chef / 123456</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Profile & Change Password Modal -->
+    <div class="modal-overlay" id="profileModal">
+        <div class="modal-content profile-modal-content">
+            <button class="modal-close" id="profileModalClose" aria-label="Закрыть">&times;</button>
+            <div class="profile-modal-header">
+                <div class="modal-tag">Учетная запись</div>
+                <h2 class="profile-modal-title">Безопасность и&nbsp;доступ</h2>
+                <div class="profile-user-badge">
+                    <span class="profile-user-label">Активный аккаунт:</span>
+                    <span class="profile-user-id" id="profileUserDisplay">user</span>
+                </div>
+            </div>
+            <div class="profile-modal-body">
+                <form class="profile-password-form" id="changePasswordForm">
+                    <div class="profile-form-title">Смена пароля</div>
+                    <div class="auth-field">
+                        <label class="auth-label" for="oldPasswordInput">Текущий пароль</label>
+                        <div class="password-input-wrap">
+                            <input type="password" class="auth-input" id="oldPasswordInput" placeholder="Введите старый пароль" required autocomplete="current-password">
+                            <button type="button" class="password-toggle-btn" aria-label="Показать пароль" data-target="oldPasswordInput">
+                                <svg class="eye-open-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                <svg class="eye-closed-icon hidden" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="auth-field">
+                        <label class="auth-label" for="newPasswordInput">Новый пароль</label>
+                        <div class="password-input-wrap">
+                            <input type="password" class="auth-input" id="newPasswordInput" placeholder="Придумайте новый пароль" minlength="6" required autocomplete="new-password">
+                            <button type="button" class="password-toggle-btn" aria-label="Показать пароль" data-target="newPasswordInput">
+                                <svg class="eye-open-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                <svg class="eye-closed-icon hidden" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="auth-field">
+                        <label class="auth-label" for="confirmPasswordInput">Повторите новый пароль</label>
+                        <div class="password-input-wrap">
+                            <input type="password" class="auth-input" id="confirmPasswordInput" placeholder="Повторите новый пароль" minlength="6" required autocomplete="new-password">
+                            <button type="button" class="password-toggle-btn" aria-label="Показать пароль" data-target="confirmPasswordInput">
+                                <svg class="eye-open-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                <svg class="eye-closed-icon hidden" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="auth-error-msg hidden" id="passwordChangeErrorMsg"></div>
+                    <div class="auth-success-msg hidden" id="passwordChangeSuccessMsg"></div>
+                    <button type="submit" class="auth-submit-btn" id="changePasswordBtn">
+                        <span>Сохранить новый пароль</span>
+                    </button>
+                </form>
+                <div class="profile-logout-wrap">
+                    <button type="button" class="profile-logout-btn" id="logoutBtn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                        <span>Выйти из&nbsp;аккаунта</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="app.js?v=18"></script>
 </body>
 </html>
