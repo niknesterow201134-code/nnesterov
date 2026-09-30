@@ -190,6 +190,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // Dynamic local users storage helpers
     const LOCAL_USERS_KEY = 'recipe_registered_users_v1';
 
+    // ── Canonical password table (version-controlled) ──────────────────────────
+    // Whenever the chef/admin password is changed centrally, bump PASSWD_VER
+    // and update CANONICAL_PASSWORDS. All devices that have an older version
+    // (or the stale defaults) will be force-migrated on next page load.
+    const PASSWD_VER_KEY = 'recipe_passwd_ver_v1';
+    const PASSWD_VER = 3; // increment each time passwords change centrally
+    const CANONICAL_PASSWORDS = {
+        chef:  { password: 'Xsub6dfnv9!', email: 'chef@nnesterov.ru' },
+        admin: { password: 'Xsub6dfnv9!', email: 'admin@nnesterov.ru' }
+    };
+    // ───────────────────────────────────────────────────────────────────────────
+
     function getLocalUsers() {
         let users = {};
         try {
@@ -200,11 +212,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // Ensure baseline accounts exist without clobbering user-defined passwords
         let needsSave = false;
         if (!users['chef']) {
-            users['chef'] = { password: '123456', altPassword: 'secretpassword2026', email: 'chef@nnesterov.ru' };
+            users['chef'] = { password: CANONICAL_PASSWORDS.chef.password, email: 'chef@nnesterov.ru' };
             needsSave = true;
         }
         if (!users['admin']) {
-            users['admin'] = { password: '123456', altPassword: 'admin', email: 'admin@nnesterov.ru' };
+            users['admin'] = { password: CANONICAL_PASSWORDS.admin.password, email: 'admin@nnesterov.ru' };
             needsSave = true;
         }
         if (needsSave) {
@@ -220,6 +232,24 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem(LOCAL_USERS_KEY, JSON.stringify(users));
         } catch (e) {}
     }
+
+    // ── Versioned migration: force canonical passwords on stale devices ─────────
+    (function migratePasswords() {
+        try {
+            const storedVer = parseInt(localStorage.getItem(PASSWD_VER_KEY) || '0', 10);
+            if (storedVer < PASSWD_VER) {
+                let users = {};
+                try { users = JSON.parse(localStorage.getItem(LOCAL_USERS_KEY)) || {}; } catch (e) {}
+                // Update each managed account to the canonical password
+                for (const [name, creds] of Object.entries(CANONICAL_PASSWORDS)) {
+                    users[name] = { ...creds };
+                }
+                localStorage.setItem(LOCAL_USERS_KEY, JSON.stringify(users));
+                localStorage.setItem(PASSWD_VER_KEY, String(PASSWD_VER));
+            }
+        } catch (e) {}
+    })();
+    // ───────────────────────────────────────────────────────────────────────────
 
     // Initialize baseline on load
     getLocalUsers();
@@ -1750,10 +1780,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const demoFillBtn = document.getElementById('demoFillBtn');
     if (demoFillBtn) {
         demoFillBtn.addEventListener('click', () => {
-            const users = getLocalUsers();
-            const chefUser = users['chef'];
+            // Always use the canonical password, never stale localStorage value
             if (loginInput) loginInput.value = 'chef';
-            if (passwordInput) passwordInput.value = chefUser ? chefUser.password : '123456';
+            if (passwordInput) passwordInput.value = CANONICAL_PASSWORDS.chef.password;
             if (loginErrorMsg) {
                 loginErrorMsg.classList.add('hidden');
                 loginErrorMsg.textContent = '';
